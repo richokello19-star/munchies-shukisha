@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Munchies & Shukisha | Chef Marketplace</title>
+    <link rel="icon" href="munchies-logo.png" type="image/png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #F1FAEE;
+            color: #11151C;
+            position: relative;
+            min-height: 100vh;
+            padding-bottom: 100px;
+        }
+        
+        header {
+            background-color: #11151C;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .logo-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .logo {
+            font-size: 36px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logo-icon {
+            height: 50px;
+            width: auto;
+        }
+        
+        .brand-names {
+            font-family: 'Pacifico', cursive;
+            font-size: 24px;
+            margin-top: 10px;
+            color: #38b6ff;
+        }
+        
+        nav ul {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        
+        nav a:hover {
+            background-color: #0A0D12;
+        }
+        
+        .hero {
+            background-image: url('https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80');
+            background-size: cover;
+            background-position: center;
+            height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+            position: relative;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .hero h1 {
+            font-size: 48px;
+            margin: 0;
+        }
+        
+        .hero p {
+            font-size: 20px;
+            margin: 20px 0;
+        }
+        
+        .btn {
+            display: inline-block;
+            background-color: #38b6ff;
+            color: black;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        
+        .btn:hover {
+            background-color: #38b6ff;
+        }
+
+        .btn-whatsapp {
+            background: #25D366;
+            color: white;
+        }
+        .btn-whatsapp:hover {
+            background: #128C7E;
+        }
+        
+        .vendor-badge {
+            background: #FFD700;
+            color: black;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+        
+        .menu {
+            padding: 50px 20px;
+            text-align: center;
+        }
+        
+        .menu h2 {
+            font-size: 36px;
+            margin-bottom: 30px;
+            color: #11151C;
+        }
+        
+        .menu-items {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+        }
+        
+        .menu-item {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            width: 300px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+            position: relative;
+        }
+        
+        .menu-item:hover {
+            transform: translateY(-10px);
+        }
+        
+        .menu-item img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        
+        .menu-item-content {
+            padding: 20px;
+        }
+        
+        .menu-item h3 {
+            margin: 0;
+            font-size: 24px;
+            color: #11151C;
+        }
+        
+        .menu-item p {
+            margin: 10px 0;
+            color: #666;
+        }
+        
+        .price {
+            font-weight: bold;
+            color: #E63946;
+            font-size: 20px;
+        }
+        
+        footer {
+            background-color: #11151C;
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+        }
+
+        /* Auth Modals */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+
+        .auth-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+            z-index: 1000;
+            width: 350px;
+            max-width: 90%;
+        }
+
+        .auth-modal h2 {
+            margin-top: 0;
+            color: #11151C;
+            text-align: center;
+        }
+
+        .auth-modal input, 
+        .auth-modal select,
+        .auth-modal textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        .auth-modal button {
+            width: 100%;
+            padding: 10px;
+            background-color: #38b6ff;
+            border: none;
+            border-radius: 5px;
+            color: black;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .auth-modal .close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        .auth-modal .switch-form {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+
+        .auth-modal .switch-form a {
+            color: #38b6ff;
+            cursor: pointer;
+        }
+
+        /* Google Button Styles */
+        .btn-google {
+            width: 100%;
+            padding: 10px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-weight: 500;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .btn-google img {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* Shopping Cart */
+        .cart-icon {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: #38b6ff;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            cursor: pointer;
+            z-index: 99;
+        }
+
+        .cart-icon i {
+            font-size: 24px;
+            color: white;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: #E63946;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        /* Social Icons */
+        .social-icons {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            display: flex;
+            gap: 15px;
+            z-index: 99;
+        }
+
+        .social-icons a {
+            color: #11151C;
+            font-size: 24px;
+            transition: all 0.3s ease;
+            background: rgba(255,255,255,0.8);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .social-icons a:hover {
+            transform: translateY(-5px);
+            background: #38b6ff;
+            color: white;
+        }
+
+        /* Dark mode for social icons when on dark backgrounds */
+        .dark-bg .social-icons a {
+            color: white;
+            background: rgba(0,0,0,0.5);
+        }
+
+        .dark-bg .social-icons a:hover {
+            background: #38b6ff;
+            color: white;
+        }
+
+        /* Protected Content Overlay */
+        .protected-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 998;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .protected-content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            color: #11151C;
+            max-width: 400px;
+        }
+
+        /* Add to Cart Button */
+        .add-to-cart {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #38b6ff;
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .menu-item:hover .add-to-cart {
+            opacity: 1;
+        }
+
+        /* Vendor Fields */
+        #vendorFields {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 15px 0;
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 5px;
+        }
+
+        #vendorFields input, 
+        #vendorFields select, 
+        #vendorFields textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        #vendorFields textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        #vendorFields small {
+            font-size: 12px;
+            color: #666;
+            margin-top: -8px;
+            margin-bottom: 5px;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <div class="logo">
+                <img src="munchies-logo.png" alt="Munchies & Shukisha Logo" class="logo-icon">
+                <span>Munchies & Shukisha</span>
+            </div>
+            <div class="brand-names">
+                <span>Every bite's a party</span>
+            </div>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#vendors">Vendors</a></li>
+                <li><a href="#">About Us</a></li>
+                <li id="authItem"><a href="#" id="authLink">Login</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Kenya's Local Chef Marketplace</h1>
+            <p>Order from home chefs & restaurants near you</p>
+            <a href="#vendors" class="btn">Browse Vendors</a>
+            <a href="#" class="btn" style="margin-left: 10px;" onclick="showSignupModal()">Sell Your Food</a>
+        </div>
+    </section>
+    
+    <section class="menu" id="vendors">
+        <h2>Featured Vendors</h2>
+        <div class="menu-items">
+            <div class="menu-item">
+                <button class="add-to-cart" onclick="addToCart('Chef Amina\'s Pilau', 499)">
+                    <i class="fas fa-plus"></i>
+                </button>
+                <img src="https://images.unsplash.com/photo-1606787366850-de6330128bfc?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Chef Amina">
+                <div class="menu-item-content">
+                    <span class="vendor-badge">Home Chef</span>
+                    <h3>Chef Amina's Pilau</h3>
+                    <p>Spiced rice with tender meat | ★★★★☆ (24 reviews)</p>
+                    <p class="price">KSh 499</p>
+                    <a href="https://wa.me/254712345678?text=I%20want%20to%20order%20Chef%20Amina's%20Pilau" class="btn btn-whatsapp">Order via WhatsApp</a>
+                </div>
+            </div>
+            
+            <div class="menu-item">
+                <button class="add-to-cart" onclick="addToCart('Biryani Special', 699)">
+                    <i class="fas fa-plus"></i>
+                </button>
+                <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Biryani House">
+                <div class="menu-item-content">
+                    <span class="vendor-badge">Restaurant</span>
+                    <h3>Biryani Special</h3>
+                    <p>Fragrant basmati rice with spices | ★★★★☆ (56 reviews)</p>
+                    <p class="price">KSh 699</p>
+                    <a href="https://wa.me/254712345678?text=I%20want%20to%20order%20Biryani%20Special" class="btn btn-whatsapp">Order via WhatsApp</a>
+                </div>
+            </div>
+            
+            <div class="menu-item">
+                <button class="add-to-cart" onclick="addToCart('Mama Pika\'s Mandazi', 299)">
+                    <i class="fas fa-plus"></i>
+                </button>
+                <img src="https://images.unsplash.com/photo-1562440499-64c9a111f713?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Mama Pika Bakery">
+                <div class="menu-item-content">
+                    <span class="vendor-badge">Bakery</span>
+                    <h3>Mama Pika's Mandazi</h3>
+                    <p>Fluffy coconut doughnuts | ★★★★★ (38 reviews)</p>
+                    <p class="price">KSh 299</p>
+                    <a href="https://wa.me/254712345678?text=I%20want%20to%20order%20Mama%20Pika's%20Mandazi" class="btn btn-whatsapp">Order via WhatsApp</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Protected Content Overlay -->
+    <div class="protected-overlay" id="protectedOverlay">
+        <div class="protected-content">
+            <h2>Please Sign In</h2>
+            <p>You need to be logged in to make purchases</p>
+            <button onclick="showLoginModal()" class="btn">Login</button>
+            <p>Don't have an account? <a href="#" onclick="showSignupModal()">Sign up</a></p>
+        </div>
+    </div>
+
+    <!-- Shopping Cart -->
+    <div class="cart-icon" onclick="showCart()">
+        <i class="fas fa-shopping-cart"></i>
+        <div class="cart-count" id="cartCount">0</div>
+    </div>
+
+    <!-- Social Icons -->
+    <div class="social-icons">
+        <a href="#" title="Facebook"><i class="fab fa-facebook"></i></a>
+        <a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
+        <a href="#" title="Twitter"><i class="fab fa-twitter"></i></a>
+        <a href="#" title="TikTok"><i class="fab fa-tiktok"></i></a>
+    </div>
+    
+    <footer>
+        <p>&copy; 2023 Munchies & Shukisha. All rights reserved.</p>
+    </footer>
+
+    <!-- Auth Modals -->
+    <div class="overlay" id="overlay"></div>
+    
+    <div class="auth-modal" id="loginModal">
+        <span class="close" onclick="closeModals()">×</span>
+        <h2>Login</h2>
+        <input type="email" id="loginEmail" placeholder="Email">
+        <input type="password" id="loginPassword" placeholder="Password">
+        <button onclick="login()">Login</button>
+        <button class="btn-google" onclick="signInWithGoogle()">
+            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
+            Sign in with Google
+        </button>
+        <div class="switch-form">
+            Don't have an account? <a onclick="switchToSignup()">Sign up</a>
+        </div>
+    </div>
+    
+    <div class="auth-modal" id="signupModal">
+        <span class="close" onclick="closeModals()">×</span>
+        <h2>Sign Up</h2>
+        <input type="text" id="signupName" placeholder="Full Name">
+        <input type="email" id="signupEmail" placeholder="Email">
+        <input type="password" id="signupPassword" placeholder="Password">
+        <select id="userType" onchange="toggleVendorFields()">
+            <option value="buyer">I'm a Buyer</option>
+            <option value="seller">I'm a Seller</option>
+        </select>
+        
+        <!-- Vendor-specific fields (hidden by default) -->
+        <div id="vendorFields" style="display: none;">
+            <input type="text" id="businessName" placeholder="Business Name">
+            <input type="text" id="businessLocation" placeholder="Business Location">
+            <input type="text" id="foodHandlersCert" placeholder="Food Handler's Certificate No.">
+            <input type="text" id="kraPin" placeholder="KRA PIN">
+            <textarea id="description" placeholder="Describe your food business"></textarea>
+            <select id="deliveryMethod">
+                <option value="">Delivery Method</option>
+                <option value="self">Self-Delivery</option>
+                <option value="platform">Platform Delivery</option>
+                <option value="both">Both</option>
+            </select>
+            <input type="file" id="businessPermit" accept="image/*,.pdf">
+            <small>Upload your business permit (image or PDF)</small>
+        </div>
+        
+        <button onclick="signup()">Create Account</button>
+        <button class="btn-google" onclick="signInWithGoogle()">
+            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
+            Sign up with Google
+        </button>
+        <div class="switch-form">
+            Already have an account? <a onclick="switchToLogin()">Login</a>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script>
+        // Your Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCNulf_lX3VcwmameFUvkAf3D6d5c8w5CA",
+            authDomain: "munchies-and-shukisha.firebaseapp.com",
+            projectId: "munchies-and-shukisha",
+            storageBucket: "munchies-and-shukisha.appspot.com",
+            messagingSenderId: "349555107843",
+            appId: "1:349555107843:web:2e23b5a31b460cb33c0636"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // DOM Elements
+        const authLink = document.getElementById('authLink');
+        const authItem = document.getElementById('authItem');
+        const overlay = document.getElementById('overlay');
+        const loginModal = document.getElementById('loginModal');
+        const signupModal = document.getElementById('signupModal');
+        const protectedOverlay = document.getElementById('protectedOverlay');
+        const cartCount = document.getElementById('cartCount');
+
+        // Cart state
+        let cart = [];
+        let isLoggedIn = false;
+
+        // Check background color for social icons
+        function checkBackgroundColor() {
+            const heroSection = document.querySelector('.hero');
+            const socialIcons = document.querySelector('.social-icons');
+            
+            // Get position of social icons
+            const rect = socialIcons.getBoundingClientRect();
+            const centerY = rect.top + (rect.height / 2);
+            
+            // Get element at that position
+            const elementAtCenter = document.elementFromPoint(rect.left + (rect.width / 2), centerY);
+            
+            // Check if it's the hero section (dark background)
+            if (elementAtCenter === heroSection) {
+                document.body.classList.add('dark-bg');
+            } else {
+                document.body.classList.remove('dark-bg');
+            }
+        }
+
+        // Run on scroll and resize
+        window.addEventListener('scroll', checkBackgroundColor);
+        window.addEventListener('resize', checkBackgroundColor);
+        // Initial check
+        checkBackgroundColor();
+
+        // Toggle vendor fields visibility
+        function toggleVendorFields() {
+            const userType = document.getElementById('userType').value;
+            const vendorFields = document.getElementById('vendorFields');
+            
+            if (userType === 'seller') {
+                vendorFields.style.display = 'block';
+            } else {
+                vendorFields.style.display = 'none';
+            }
+        }
+
+        // Auth state listener
+        firebase.auth().onAuthStateChanged(user => {
+            if (user) {
+                // User is signed in
+                isLoggedIn = true;
+                authLink.textContent = 'Logout';
+                authLink.onclick = logout;
+                console.log("User logged in:", user.email);
+                
+                // Show different UI for sellers
+                if (user.displayName && user.displayName.includes("(Seller)")) {
+                    authItem.innerHTML = '<a href="#" onclick="logout()">Seller Dashboard</a>';
+                }
+            } else {
+                // No user is signed in
+                isLoggedIn = false;
+                authLink.textContent = 'Login';
+                authLink.onclick = showLoginModal;
+                console.log("No user signed in");
+            }
+        });
+
+        // Show login modal
+        function showLoginModal() {
+            closeModals();
+            overlay.style.display = 'block';
+            loginModal.style.display = 'block';
+            protectedOverlay.style.display = 'none';
+        }
+
+        // Show signup modal
+        function showSignupModal() {
+            closeModals();
+            overlay.style.display = 'block';
+            signupModal.style.display = 'block';
+            protectedOverlay.style.display = 'none';
+        }
+
+        // Close all modals
+        function closeModals() {
+            overlay.style.display = 'none';
+            loginModal.style.display = 'none';
+            signupModal.style.display = 'none';
+        }
+
+        // Switch to signup form
+        function switchToSignup() {
+            loginModal.style.display = 'none';
+            signupModal.style.display = 'block';
+        }
+
+        // Switch to login form
+        function switchToLogin() {
+            signupModal.style.display = 'none';
+            loginModal.style.display = 'block';
+        }
+
+        // Login function
+        function login() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            firebase.auth().signInWithEmailAndPassword(email, password)
+                .then(() => {
+                    closeModals();
+                    alert("Login successful!");
+                    isLoggedIn = true;
+                })
+                .catch(error => {
+                    alert("Error: " + error.message);
+                    console.error(error);
+                });
+        }
+
+        // Signup function
+        function signup() {
+            const name = document.getElementById('signupName').value;
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+            const userType = document.getElementById('userType').value;
+
+            // Basic validation
+            if (!name || !email || !password) {
+                alert('Please fill in all required fields');
+                return;
+            }
+
+            // Additional validation for sellers
+            if (userType === 'seller') {
+                const businessName = document.getElementById('businessName').value;
+                const businessLocation = document.getElementById('businessLocation').value;
+                const foodHandlersCert = document.getElementById('foodHandlersCert').value;
+                
+                if (!businessName || !businessLocation || !foodHandlersCert) {
+                    alert('As a seller, please provide your business details for verification');
+                    return;
+                }
+            }
+
+            firebase.auth().createUserWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    const user = userCredential.user;
+                    let displayName = name;
+                    let additionalData = {};
+                    
+                    if (userType === 'seller') {
+                        displayName += " (Seller)";
+                        additionalData = {
+                            businessName: document.getElementById('businessName').value,
+                            businessLocation: document.getElementById('businessLocation').value,
+                            foodHandlersCert: document.getElementById('foodHandlersCert').value,
+                            kraPin: document.getElementById('kraPin').value,
+                            description: document.getElementById('description').value,
+                            deliveryMethod: document.getElementById('deliveryMethod').value,
+                            isVerified: false, // Initially not verified
+                            verificationPending: true,
+                            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                        };
+                    }
+                
+                    // Update user profile
+                    return Promise.all([
+                        user.updateProfile({ displayName }),
+                        // Store additional data in Firestore
+                        db.collection('users').doc(user.uid).set(additionalData)
+                    ]);
+                })
+                .then(() => {
+                    closeModals();
+                    if (userType === 'seller') {
+                        alert("Account created successfully! Your seller account is pending verification. We'll contact you once verified.");
+                    } else {
+                        alert("Account created successfully!");
+                    }
+                    isLoggedIn = true;
+                })
+                .catch(error => {
+                    alert("Error: " + error.message);
+                    console.error(error);
+                });
+        }
+
+        // Google sign-in
+        function signInWithGoogle() {
+            const provider = new firebase.auth.GoogleAuthProvider();
+            
+            firebase.auth().signInWithPopup(provider)
+                .then((result) => {
+                    closeModals();
+                    alert("Google login successful!");
+                    isLoggedIn = true;
+                    
+                    // Check if this is a new user signing up
+                    if (result.additionalUserInfo.isNewUser) {
+                        // For new users, ask if they want to be a seller
+                        const wantsToBeSeller = confirm("Would you like to register as a seller?");
+                        if (wantsToBeSeller) {
+                            // Show seller registration form
+                            showSignupModal();
+                            document.getElementById('userType').value = 'seller';
+                            toggleVendorFields();
+                        }
+                    }
+                })
+                .catch((error) => {
+                    alert("Google login error: " + error.message);
+                    console.error(error);
+                });
+        }
+
+        // Logout function
+        function logout() {
+            firebase.auth().signOut()
+                .then(() => {
+                    alert("Logged out successfully");
+                    isLoggedIn = false;
+                    cart = [];
+                    updateCartCount();
+                })
+                .catch(error => {
+                    alert("Error signing out: " + error.message);
+                });
+        }
+
+        // Add to cart function
+        function addToCart(itemName, itemPrice) {
+            if (!isLoggedIn) {
+                protectedOverlay.style.display = 'flex';
+                return;
+            }
+
+            cart.push({
+                name: itemName,
+                price: itemPrice
+            });
+            updateCartCount();
+            alert(`${itemName} added to cart!`);
+        }
+
+        // Update cart count
+        function updateCartCount() {
+            cartCount.textContent = cart.length;
+        }
+
+        // Show cart
+        function showCart() {
+            if (!isLoggedIn) {
+                protectedOverlay.style.display = 'flex';
+                return;
+            }
+
+            if (cart.length === 0) {
+                alert("Your cart is empty!");
+                return;
+            }
+
+            let cartContent = "Your Cart:\n\n";
+            let total = 0;
+            
+            cart.forEach(item => {
+                cartContent += `${item.name} - KSh ${item.price}\n`;
+                total += item.price;
+            });
+
+            cartContent += `\nTotal: KSh ${total}`;
+            alert(cartContent);
+        }
+
+        // Close modals when clicking overlay
+        overlay.addEventListener('click', closeModals);
+        protectedOverlay.addEventListener('click', () => {
+            protectedOverlay.style.display = 'none';
+        });
+
+        // Prevent modal close when clicking inside modal
+        loginModal.addEventListener('click', (e) => e.stopPropagation());
+        signupModal.addEventListener('click', (e) => e.stopPropagation());
+        document.querySelector('.protected-content').addEventListener('click', (e) => e.stopPropagation());
+    </script>
+</body>
+</html>
