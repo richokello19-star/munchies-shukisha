@@ -36,17 +36,27 @@
             min-height: 100vh;
             padding-bottom: 100px;
             line-height: 1.6;
+            padding-top: 150px; /* Added for fixed header */
         }
         
+        /* Header Styles */
         header {
             background-color: var(--primary);
             color: white;
-            padding: 20px 0;
-            text-align: center;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            position: sticky;
+            position: fixed;
             top: 0;
-            z-index: 100;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            transition: all 0.4s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            transition: all 0.4s ease;
         }
         
         .logo-container {
@@ -54,6 +64,7 @@
             flex-direction: column;
             align-items: center;
             margin-bottom: 15px;
+            transition: all 0.4s ease;
         }
         
         .logo {
@@ -63,6 +74,7 @@
             align-items: center;
             gap: 15px;
             letter-spacing: -0.5px;
+            transition: all 0.4s ease;
         }
         
         .logo-icon {
@@ -76,6 +88,7 @@
             justify-content: center;
             color: white;
             font-size: 24px;
+            transition: all 0.4s ease;
         }
         
         .brand-names {
@@ -84,6 +97,7 @@
             margin-top: 8px;
             color: var(--secondary);
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            transition: all 0.4s ease;
         }
         
         nav ul {
@@ -93,6 +107,7 @@
             justify-content: center;
             gap: 25px;
             flex-wrap: wrap;
+            transition: all 0.4s ease;
         }
         
         nav a {
@@ -104,6 +119,9 @@
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         
         nav a:hover {
@@ -125,6 +143,55 @@
         
         nav a:hover::after {
             width: 70%;
+        }
+        
+        .nav-text {
+            transition: all 0.4s ease;
+        }
+        
+        /* Header scrolled state */
+        header.scrolled {
+            padding: 5px 0;
+        }
+        
+        header.scrolled .header-content {
+            padding: 5px 20px;
+        }
+        
+        header.scrolled .logo-container {
+            flex-direction: row;
+            align-items: center;
+            margin-bottom: 0;
+            gap: 10px;
+        }
+        
+        header.scrolled .logo {
+            font-size: 1.5rem;
+            gap: 10px;
+        }
+        
+        header.scrolled .logo-icon {
+            height: 35px;
+            width: 35px;
+            font-size: 18px;
+        }
+        
+        header.scrolled .brand-names {
+            font-size: 1.2rem;
+            margin-top: 0;
+        }
+        
+        header.scrolled .nav-text {
+            display: none;
+        }
+        
+        header.scrolled nav ul {
+            gap: 15px;
+        }
+        
+        header.scrolled nav a {
+            padding: 6px 12px;
+            font-size: 0.9rem;
         }
         
         .hero {
@@ -1187,6 +1254,7 @@
         .file-upload-box p {
             color: #666;
             margin-bottom: 15px;
+            font-size: 1rem;
         }
 
         .file-upload-box span {
@@ -1262,6 +1330,10 @@
 
         /* Mobile optimizations */
         @media (max-width: 768px) {
+            body {
+                padding-top: 120px;
+            }
+            
             .hero {
                 height: 400px;
                 background-attachment: scroll;
@@ -1340,9 +1412,37 @@
                 width: 100px;
                 height: 100px;
             }
+            
+            /* Header adjustments for mobile */
+            header.scrolled .logo-container {
+                flex-direction: column;
+                align-items: center;
+                gap: 5px;
+            }
+            
+            header.scrolled .logo {
+                font-size: 1.2rem;
+            }
+            
+            header.scrolled .brand-names {
+                font-size: 1rem;
+            }
+            
+            header.scrolled nav ul {
+                gap: 8px;
+            }
+            
+            header.scrolled nav a {
+                padding: 4px 8px;
+                font-size: 0.8rem;
+            }
         }
 
         @media (max-width: 480px) {
+            body {
+                padding-top: 100px;
+            }
+            
             .hero {
                 height: 350px;
             }
@@ -1379,27 +1479,29 @@
 </head>
 <body>
     <header>
-        <div class="logo-container">
-            <div class="logo">
-                <div class="logo-icon">
-                    <img src="munchies-logo.png" alt="Munchies Logo" style="height: 60px;">
+        <div class="header-content">
+            <div class="logo-container">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <img src="munchies-logo.png" alt="Munchies Logo" style="height: 40px;">
+                    </div>
+                    <span>Munchies & Shukisha</span>
                 </div>
-                <span>Munchies & Shukisha</span>
+                <div class="brand-names">
+                    <span>Every bite's a party</span>
+                </div>
             </div>
-            <div class="brand-names">
-                <span>Every bite's a party</span>
-            </div>
+            <nav>
+                <ul>
+                    <li><a href="#"><i class="fas fa-home"></i> <span class="nav-text">Home</span></a></li>
+                    <li><a href="#vendors"><i class="fas fa-utensils"></i> <span class="nav-text">Vendors</span></a></li>
+                    <li><a href="#features"><i class="fas fa-star"></i> <span class="nav-text">Features</span></a></li>
+                    <li id="authItem"><a href="#" id="authLink"><i class="fas fa-user"></i> <span class="nav-text">Login</span></a></li>
+                    <li id="vendorDashboardLink" style="display: none;"><a href="#" onclick="showVendorDashboard()"><i class="fas fa-store"></i> <span class="nav-text">My Store</span></a></li>
+                    <li><a href="#"><i class="fas fa-phone"></i> <span class="nav-text">Contact</span></a></li>
+                </ul>
+            </nav>
         </div>
-        <nav>
-            <ul>
-                <li><a href="#"><i class="fas fa-home"></i> Home</a></li>
-                <li><a href="#vendors"><i class="fas fa-utensils"></i> Vendors</a></li>
-                <li><a href="#features"><i class="fas fa-star"></i> Features</a></li>
-                <li id="authItem"><a href="#" id="authLink"><i class="fas fa-user"></i> Login</a></li>
-                <li id="vendorDashboardLink" style="display: none;"><a href="#" onclick="showVendorDashboard()"><i class="fas fa-store"></i> My Store</a></li>
-                <li><a href="#"><i class="fas fa-phone"></i> Contact</a></li>
-            </ul>
-        </nav>
     </header>
     
     <main id="main-content">
@@ -1689,6 +1791,23 @@
             loadCart();
             loadVendors();
             checkBackgroundColor();
+            setupHeaderScroll();
+        }
+
+        // Setup header scroll behavior
+        function setupHeaderScroll() {
+            const header = document.querySelector('header');
+            const headerContent = document.querySelector('.header-content');
+            
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 100) {
+                    header.classList.add('scrolled');
+                    headerContent.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
+                    headerContent.classList.remove('scrolled');
+                }
+            });
         }
 
         // Load vendors from localStorage
@@ -1966,7 +2085,7 @@
                 const userData = JSON.parse(sessionStorage.getItem('userData') || '{}');
                 currentUser = userData;
                 
-                authLink.innerHTML = '<i class="fas fa-sign-out-alt"></i> Logout';
+                authLink.innerHTML = '<i class="fas fa-sign-out-alt"></i> <span class="nav-text">Logout</span>';
                 authLink.onclick = logout;
                 
                 // Show vendor dashboard link if user is a seller
@@ -1976,7 +2095,7 @@
             } else {
                 isLoggedIn = false;
                 currentUser = null;
-                authLink.innerHTML = '<i class="fas fa-user"></i> Login';
+                authLink.innerHTML = '<i class="fas fa-user"></i> <span class="nav-text">Login</span>';
                 authLink.onclick = showLoginModal;
                 vendorDashboardLink.style.display = 'none';
             }
@@ -2378,7 +2497,7 @@
             });
             
             // Add active class to selected option
-            event.target.closest('.payment-option').class.classList.add('active');
+            event.target.closest('.payment-option').classList.add('active');
             
             // Show appropriate form
             document.getElementById('mpesaForm').style.display = method === 'mpesa' ? 'block' : 'none';
@@ -2419,7 +2538,7 @@
             showToast("Processing card payment...");
             
             // Simulate card payment
-            setTimeout(() {
+            setTimeout(() => {
                 closeCheckout();
                 placeOrder();
                 showToast("Payment successful! Order placed.", false, 'success');
