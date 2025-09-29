@@ -16,6 +16,10 @@
     box-sizing: border-box;
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
 body {
     font-family: 'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: var(--light);
@@ -27,6 +31,8 @@ body {
     padding-top: 150px; /* Fixed header spacing */
 }
 
+/* ===== MOBILE RESPONSIVENESS FIXES ===== */
+
 /* Mobile header spacing fixes */
 @media (max-width: 768px) {
     body {
@@ -37,6 +43,50 @@ body {
 @media (max-width: 480px) {
     body {
         padding-top: 100px;
+    }
+}
+
+/* Improved touch targets for mobile */
+@media (max-width: 768px) {
+    button, 
+    .btn,
+    a.nav-link,
+    nav a {
+        min-height: 44px;
+        min-width: 44px;
+        padding: 12px 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    /* Larger form elements for mobile */
+    input, select, textarea {
+        font-size: 16px !important; /* Prevents zoom on iOS */
+        padding: 12px !important;
+        min-height: 44px !important;
+    }
+    
+    /* Better mobile typography */
+    body {
+        font-size: 16px;
+        line-height: 1.5;
+    }
+    
+    h1 {
+        font-size: 1.8rem !important;
+    }
+    
+    h2 {
+        font-size: 1.5rem !important;
+    }
+    
+    h3 {
+        font-size: 1.3rem !important;
+    }
+    
+    .small-text {
+        font-size: 0.9rem !important;
     }
 }
 
@@ -226,6 +276,16 @@ header.scrolled nav a {
         padding: 4px 8px;
         font-size: 0.8rem;
     }
+    
+    /* Mobile navigation improvements */
+    nav ul {
+        gap: 15px;
+    }
+    
+    nav a {
+        font-size: 0.9rem;
+        padding: 10px 16px;
+    }
 }
 
 .hero {
@@ -287,6 +347,10 @@ header.scrolled nav a {
     box-shadow: 0 4px 15px rgba(56, 182, 255, 0.3);
     position: relative;
     overflow: hidden;
+    min-height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .btn:hover {
@@ -435,57 +499,52 @@ footer {
 
 /* Enhanced CSS for Munchies & Shukisha */
 
-/* Smooth scrolling for the entire page */
-html {
-  scroll-behavior: smooth;
-}
-
 /* Animation for page transitions */
 .page-transition {
-  animation: fadeIn 0.5s ease-in-out;
+    animation: fadeIn 0.5s ease-in-out;
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 /* Improved focus styles for better accessibility */
 button:focus, a:focus, input:focus, select:focus, textarea:focus {
-  outline: 3px solid var(--secondary);
-  outline-offset: 2px;
+    outline: 3px solid var(--secondary);
+    outline-offset: 2px;
 }
 
 /* Loading animation */
 .loading-spinner {
-  display: inline-block;
-  width: 20px;
-  height: 20px;
-  border: 3px solid rgba(255,255,255,.3);
-  border-radius: 50%;
-  border-top-color: #fff;
-  animation: spin 1s ease-in-out infinite;
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255,255,255,.3);
+    border-radius: 50%;
+    border-top-color: #fff;
+    animation: spin 1s ease-in-out infinite;
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+    to { transform: rotate(360deg); }
 }
 
 /* Pulse animation for call-to-action elements */
 .pulse {
-  animation: pulse 2s infinite;
+    animation: pulse 2s infinite;
 }
 
 @keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-  100% { transform: scale(1); }
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
 }
 
 /* Staggered animation for menu items */
 .menu-item {
-  animation: slideUp 0.5s ease forwards;
-  opacity: 0;
+    animation: slideUp 0.5s ease forwards;
+    opacity: 0;
 }
 
 .menu-item:nth-child(1) { animation-delay: 0.1s; }
@@ -494,224 +553,296 @@ button:focus, a:focus, input:focus, select:focus, textarea:focus {
 .menu-item:nth-child(4) { animation-delay: 0.4s; }
 
 @keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* Improved hover effects for cards */
 .feature-card, .menu-item {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .feature-card:hover, .menu-item:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
 }
 
 /* Parallax effect for hero section */
 .hero {
-  background-attachment: fixed;
+    background-attachment: fixed;
 }
 
 /* Mobile menu for smaller screens */
 .mobile-menu-btn {
-  display: none;
-  background: none;
-  border: none;
-  color: white;
-  font-size: 24px;
-  cursor: pointer;
-  padding: 10px;
+    display: none;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 10px;
+    min-height: 44px;
+    min-width: 44px;
+    align-items: center;
+    justify-content: center;
 }
 
 @media (max-width: 768px) {
-  .mobile-menu-btn {
-    display: block;
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    z-index: 101;
-  }
-  
-  nav ul {
-    flex-direction: column;
-    position: fixed;
-    top: 0;
-    right: -100%;
-    height: 100vh;
-    width: 70%;
-    background: var(--primary);
-    padding-top: 60px;
-    transition: right 0.3s ease;
-    z-index: 100;
-    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.15);
-  }
-  
-  nav ul.active {
-    right: 0;
-  }
-  
-  nav ul li {
-    margin: 15px 0;
-  }
-  
-  .overlay.active {
-    display: block;
-  }
+    .mobile-menu-btn {
+        display: flex;
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        z-index: 101;
+    }
+    
+    nav ul {
+        flex-direction: column;
+        position: fixed;
+        top: 0;
+        right: -100%;
+        height: 100vh;
+        width: 70%;
+        background: var(--primary);
+        padding-top: 60px;
+        transition: right 0.3s ease;
+        z-index: 100;
+        box-shadow: -5px 0 15px rgba(0, 0, 0, 0.15);
+    }
+    
+    nav ul.active {
+        right: 0;
+    }
+    
+    nav ul li {
+        margin: 15px 0;
+    }
+    
+    .overlay.active {
+        display: block;
+    }
 }
 
 /* Improved form validation styles */
 .form-group.error input {
-  border-color: var(--accent);
+    border-color: var(--accent);
 }
 
 .error-message {
-  color: var(--accent);
-  font-size: 0.85rem;
-  margin-top: 5px;
-  display: none;
+    color: var(--accent);
+    font-size: 0.85rem;
+    margin-top: 5px;
+    display: none;
 }
 
 .form-group.error .error-message {
-  display: block;
+    display: block;
 }
 
 /* Animation for the cart icon when items are added */
 .cart-icon.added {
-  animation: bounce 0.5s;
+    animation: bounce 0.5s;
 }
 
 @keyframes bounce {
-  0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
-  40% {transform: translateY(-20px);}
-  60% {transform: translateY(-10px);}
+    0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+    40% {transform: translateY(-20px);}
+    60% {transform: translateY(-10px);}
 }
 
 /* Floating animation for the WhatsApp button */
 .floating {
-  animation: float 3s ease-in-out infinite;
+    animation: float 3s ease-in-out infinite;
 }
 
 @keyframes float {
-  0% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
-  100% { transform: translateY(0px); }
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
 }
 
 /* Custom scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
+    width: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+    background: #f1f1f1;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--secondary);
-  border-radius: 10px;
+    background: var(--secondary);
+    border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #2a93d5;
+    background: #2a93d5;
 }
 
-/* Mobile optimizations */
+/* ===== ENHANCED MOBILE OPTIMIZATIONS ===== */
 @media (max-width: 768px) {
-  .hero {
-      height: 400px;
-      background-attachment: scroll;
-  }
-  
-  .hero h1 {
-      font-size: 2.5rem;
-  }
-  
-  .hero p {
-      font-size: 1.2rem;
-  }
-  
-  .btn-container {
-      flex-direction: column;
-      align-items: center;
-  }
-  
-  .menu h2 {
-      font-size: 2.2rem;
-  }
-  
-  .menu-items {
-      grid-template-columns: 1fr;
-      gap: 30px;
-  }
-  
-  .restaurant-title {
-      flex-direction: column;
-      gap: 15px;
-  }
-  
-  .restaurant-title h1 {
-      font-size: 2rem;
-  }
-  
-  .restaurant-hero {
-      height: 250px;
-  }
-  
-  .menu-items-grid {
-      grid-template-columns: 1fr;
-  }
-  
-  .restaurant-actions {
-      flex-direction: column;
-  }
-  
-  .payment-options {
-      flex-direction: column;
-  }
-  
-  .preview-item {
-      width: 100px;
-      height: 100px;
-  }
+    .hero {
+        height: 400px;
+        background-attachment: scroll;
+        padding: 0 15px;
+    }
+    
+    .hero h1 {
+        font-size: 2.5rem;
+        line-height: 1.3;
+    }
+    
+    .hero p {
+        font-size: 1.2rem;
+        margin-bottom: 25px;
+    }
+    
+    .hero-content {
+        padding: 25px 20px;
+        margin: 0 10px;
+    }
+    
+    .btn-container {
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+    }
+    
+    .btn {
+        width: 100%;
+        max-width: 280px;
+        padding: 16px 24px;
+        font-size: 1.1rem;
+    }
+    
+    .menu {
+        padding: 50px 15px;
+    }
+    
+    .menu h2 {
+        font-size: 2.2rem;
+    }
+    
+    .menu p {
+        font-size: 1.1rem;
+        padding: 0 10px;
+    }
+    
+    .menu-items {
+        grid-template-columns: 1fr;
+        gap: 25px;
+        padding: 0 10px;
+    }
+    
+    .menu-item {
+        margin: 0 auto;
+        max-width: 400px;
+    }
+    
+    .menu-item-content {
+        padding: 20px;
+    }
+    
+    .menu-item h3 {
+        font-size: 1.4rem;
+    }
+    
+    .price {
+        font-size: 1.6rem;
+    }
 }
 
 @media (max-width: 480px) {
-  .hero {
-      height: 350px;
-  }
-  
-  .hero h1 {
-      font-size: 2rem;
-  }
-  
-  .logo {
-      font-size: 2rem;
-  }
-  
-  .brand-names {
-      font-size: 1.5rem;
-  }
-  
-  .menu h2 {
-      font-size: 1.8rem;
-  }
-  
-  .restaurant-info {
-      padding: 20px;
-  }
-  
-  .file-upload-box {
-      padding: 20px;
-  }
-  
-  .file-upload-box i {
-      font-size: 2.5rem;
-  }
+    .hero {
+        height: 350px;
+    }
+    
+    .hero h1 {
+        font-size: 2rem;
+    }
+    
+    .hero p {
+        font-size: 1.1rem;
+    }
+    
+    .logo {
+        font-size: 2rem;
+    }
+    
+    .brand-names {
+        font-size: 1.5rem;
+    }
+    
+    .menu h2 {
+        font-size: 1.8rem;
+    }
+    
+    .menu-items {
+        gap: 20px;
+    }
+    
+    .menu-item-img {
+        height: 180px;
+    }
+    
+    /* Ensure all interactive elements are mobile-friendly */
+    select, button, [role="button"] {
+        touch-action: manipulation;
+    }
+    
+    /* Prevent horizontal scrolling */
+    body {
+        overflow-x: hidden;
+        width: 100%;
+    }
+    
+    /* Improve tap highlights */
+    a, button {
+        -webkit-tap-highlight-color: rgba(56, 182, 255, 0.3);
+    }
+}
+
+/* Additional mobile-first improvements */
+@media (max-width: 360px) {
+    body {
+        padding-top: 90px;
+    }
+    
+    .hero {
+        height: 300px;
+    }
+    
+    .hero h1 {
+        font-size: 1.8rem;
+    }
+    
+    .hero p {
+        font-size: 1rem;
+    }
+    
+    .menu h2 {
+        font-size: 1.6rem;
+    }
+    
+    .menu-items {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Print styles */
+@media print {
+    .btn, nav, footer {
+        display: none;
+    }
+    
+    body {
+        color: black;
+        background: white;
+    }
 }
