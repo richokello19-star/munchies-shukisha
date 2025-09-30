@@ -84,6 +84,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
+    
     <style>
         :root {
             --primary: #11151C;
@@ -2489,6 +2495,469 @@
                 justify-content: space-between;
             }
         }
+
+        /* ===== SUBSCRIPTION PAYMENT STYLES ===== */
+        .subscription-plans {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin: 30px 0;
+        }
+
+        .subscription-plan {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            border: 3px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .subscription-plan:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .subscription-plan.popular {
+            border-color: var(--secondary);
+            transform: scale(1.05);
+        }
+
+        .subscription-plan.popular::before {
+            content: 'Most Popular';
+            position: absolute;
+            top: 15px;
+            right: -30px;
+            background: var(--secondary);
+            color: white;
+            padding: 5px 30px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            transform: rotate(45deg);
+        }
+
+        .plan-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .plan-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .plan-price {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--secondary);
+            margin-bottom: 5px;
+        }
+
+        .plan-period {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .plan-features {
+            list-style: none;
+            margin: 25px 0;
+        }
+
+        .plan-features li {
+            padding: 8px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #555;
+        }
+
+        .plan-features li i {
+            color: var(--success);
+            font-size: 1.1rem;
+        }
+
+        .plan-features li.disabled {
+            color: #999;
+        }
+
+        .plan-features li.disabled i {
+            color: #ccc;
+        }
+
+        .payment-section {
+            margin-top: 30px;
+            padding-top: 25px;
+            border-top: 1px solid #e1e5e9;
+        }
+
+        .payment-methods {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .payment-method {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .payment-method.active {
+            border-color: var(--secondary);
+            background-color: rgba(56, 182, 255, 0.1);
+        }
+
+        .payment-method i {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            display: block;
+            color: var(--secondary);
+        }
+
+        .mpesa-form, .card-form {
+            display: none;
+            animation: slideDown 0.3s ease;
+        }
+
+        .mpesa-form.active, .card-form.active {
+            display: block;
+        }
+
+        .subscription-status {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            border-left: 4px solid var(--success);
+        }
+
+        .subscription-status.expired {
+            border-left-color: var(--accent);
+        }
+
+        .subscription-status.warning {
+            border-left-color: var(--warning);
+        }
+
+        .status-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .status-badge.active {
+            background: var(--success);
+            color: white;
+        }
+
+        .status-badge.expired {
+            background: var(--accent);
+            color: white;
+        }
+
+        .status-badge.pending {
+            background: var(--warning);
+            color: white;
+        }
+
+        .status-details {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .payment-history {
+            margin-top: 30px;
+        }
+
+        .payment-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #e1e5e9;
+        }
+
+        .payment-item:last-child {
+            border-bottom: none;
+        }
+
+        .payment-info h4 {
+            margin: 0 0 5px;
+            color: var(--primary);
+        }
+
+        .payment-info p {
+            margin: 0;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .payment-amount {
+            font-weight: 700;
+            color: var(--success);
+        }
+
+        .payment-status {
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .payment-status.success {
+            background: rgba(76, 175, 80, 0.1);
+            color: var(--success);
+        }
+
+        .payment-status.failed {
+            background: rgba(230, 57, 70, 0.1);
+            color: var(--accent);
+        }
+
+        .payment-status.pending {
+            background: rgba(255, 152, 0, 0.1);
+            color: var(--warning);
+        }
+
+        /* ===== CONTACT SECTION STYLES ===== */
+        .contact-section {
+            padding: 80px 20px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        }
+
+        .contact-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .contact-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .contact-header h2 {
+            font-size: 2.8rem;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .contact-header p {
+            font-size: 1.2rem;
+            color: #666;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .contact-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+        }
+
+        .contact-info {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        .contact-info h3 {
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin-bottom: 25px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .contact-icon {
+            background: var(--secondary);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .contact-details h4 {
+            color: var(--primary);
+            margin-bottom: 5px;
+            font-size: 1.1rem;
+        }
+
+        .contact-details p {
+            color: #666;
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        .contact-social {
+            margin-top: 30px;
+        }
+
+        .contact-social h4 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .social-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            text-decoration: none;
+            color: var(--primary);
+            transition: all 0.3s ease;
+        }
+
+        .social-link:hover {
+            background: var(--secondary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .contact-form {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        .contact-form h3 {
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin-bottom: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            border-color: var(--secondary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(56, 182, 255, 0.2);
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .whatsapp-float {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            background: var(--whatsapp);
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 25px rgba(37, 211, 102, 0.4);
+            cursor: pointer;
+            z-index: 99;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            animation: pulse 2s infinite;
+        }
+
+        .whatsapp-float:hover {
+            transform: scale(1.1);
+            box-shadow: 0 12px 30px rgba(37, 211, 102, 0.6);
+        }
+
+        .whatsapp-float i {
+            font-size: 28px;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 8px 25px rgba(37, 211, 102, 0.4);
+            }
+            50% {
+                box-shadow: 0 8px 25px rgba(37, 211, 102, 0.8);
+            }
+            100% {
+                box-shadow: 0 8px 25px rgba(37, 211, 102, 0.4);
+            }
+        }
+
+        /* Mobile styles for contact section */
+        @media (max-width: 768px) {
+            .contact-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .contact-info, .contact-form {
+                padding: 30px;
+            }
+            
+            .whatsapp-float {
+                bottom: 90px;
+                right: 20px;
+                width: 50px;
+                height: 50px;
+            }
+            
+            .whatsapp-float i {
+                font-size: 24px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -2515,7 +2984,8 @@
                     <li><a href="#features"><i class="fas fa-star" aria-hidden="true"></i> <span class="nav-text">Features</span></a></li>
                     <li id="authItem"><a href="#" id="authLink"><i class="fas fa-user" aria-hidden="true"></i> <span class="nav-text">Login</span></a></li>
                     <li id="vendorDashboardLink" style="display: none;"><a href="vendor-dashboard.html"><i class="fas fa-store" aria-hidden="true"></i> <span class="nav-text">My Store</span></a></li>
-                    <li><a href="#"><i class="fas fa-phone" aria-hidden="true"></i> <span class="nav-text">Contact</span></a></li>
+                    <!-- CHANGED: Updated contact link to trigger modal instead of scrolling -->
+                    <li><a href="#" onclick="showContactModal()"><i class="fas fa-phone" aria-hidden="true"></i> <span class="nav-text">Contact</span></a></li>
                 </ul>
             </nav>
         </div>
@@ -2660,6 +3130,11 @@
                     </div>
                 </div>
             </section>
+
+            <!-- CHANGED: Contact Section - Now hidden by default and will be shown in modal -->
+            <section id="contact" class="contact-section" style="display: none;">
+                <!-- Contact content remains the same but will be displayed in modal -->
+            </section>
         </div>
 
         <!-- Restaurant Detail Page (hidden by default) -->
@@ -2667,6 +3142,121 @@
             <!-- Content will be dynamically populated by JavaScript -->
         </div>
     </main>
+
+    <!-- ADDED: Contact Modal -->
+    <div class="auth-modal" id="contactModal" aria-hidden="true" role="dialog" aria-labelledby="contact-heading">
+        <span class="close" onclick="closeContactModal()" aria-label="Close contact modal">×</span>
+        <div class="contact-container">
+            <div class="contact-header">
+                <h2 id="contact-heading">Get In Touch</h2>
+                <p>We'd love to hear from you! Reach out through any of these channels.</p>
+            </div>
+            
+            <div class="contact-content">
+                <!-- Contact Info -->
+                <div class="contact-info">
+                    <h3>Contact Information</h3>
+                    
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h4>Phone Numbers</h4>
+                            <p>+254 113 110 743 (M-Pesa & WhatsApp)</p>
+                            <p>Call us for any inquiries or support</p>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h4>Email Address</h4>
+                            <p>richokello19@gmail.com</p>
+                            <p>support@munchiesandshukisha.com</p>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h4>Business Location</h4>
+                            <p>Nairobi, Kenya</p>
+                            <p>Serving customers across Kenya</p>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h4>Business Hours</h4>
+                            <p>Monday - Sunday: 7:00 AM - 11:00 PM</p>
+                            <p>24/7 Customer Support Available</p>
+                        </div>
+                    </div>
+
+                    <div class="contact-social">
+                        <h4>Follow Us</h4>
+                        <div class="social-links">
+                            <a href="https://facebook.com/munchiesandshukisha" class="social-link" target="_blank">
+                                <i class="fab fa-facebook-f"></i>
+                                <span>Facebook</span>
+                            </a>
+                            <a href="https://instagram.com/munchiesandshukisha" class="social-link" target="_blank">
+                                <i class="fab fa-instagram"></i>
+                                <span>Instagram</span>
+                            </a>
+                            <a href="https://tiktok.com/@munchiesandshukisha" class="social-link" target="_blank">
+                                <i class="fab fa-tiktok"></i>
+                                <span>TikTok</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Contact Form -->
+                <div class="contact-form">
+                    <h3>Send us a Message</h3>
+                    <form id="contactModalForm">
+                        <div class="form-group">
+                            <label for="contactModalName">Full Name</label>
+                            <input type="text" id="contactModalName" name="name" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="contactModalEmail">Email Address</label>
+                            <input type="email" id="contactModalEmail" name="email" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="contactModalSubject">Subject</label>
+                            <input type="text" id="contactModalSubject" name="subject" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="contactModalMessage">Message</label>
+                            <textarea id="contactModalMessage" name="message" required></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn" style="width: 100%;">
+                            <i class="fas fa-paper-plane"></i> Send Message
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- WhatsApp Float Button -->
+    <div class="whatsapp-float" onclick="openWhatsApp()" role="button" aria-label="Contact us on WhatsApp">
+        <i class="fab fa-whatsapp" aria-hidden="true"></i>
+    </div>
 
     <!-- Protected Content Overlay -->
     <div class="protected-overlay" id="protectedOverlay" aria-hidden="true">
@@ -2686,14 +3276,17 @@
 
     <!-- Social Icons -->
     <div class="social-icons" aria-label="Social media links">
-        <a href="#" title="Facebook" aria-label="Visit our Facebook page"><i class="fab fa-facebook-f" aria-hidden="true"></i></a>
-        <a href="#" title="Instagram" aria-label="Visit our Instagram page"><i class="fab fa-instagram" aria-hidden="true"></i></a>
-        <a href="#" title="Twitter" aria-label="Visit our Twitter page"><i class="fab fa-twitter" aria-hidden="true"></i></a>
-        <a href="#" title="TikTok" aria-label="Visit our TikTok page"><i class="fab fa-tiktok" aria-hidden="true"></i></a>
+        <a href="https://facebook.com/munchiesandshukisha" title="Facebook" aria-label="Visit our Facebook page"><i class="fab fa-facebook-f" aria-hidden="true"></i></a>
+        <a href="https://instagram.com/munchiesandshukisha" title="Instagram" aria-label="Visit our Instagram page"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+        <a href="https://tiktok.com/@munchiesandshukisha" title="TikTok" aria-label="Visit our TikTok page"><i class="fab fa-tiktok" aria-hidden="true"></i></a>
+        <a href="https://wa.me/254113110743" title="WhatsApp" aria-label="Contact us on WhatsApp"><i class="fab fa-whatsapp" aria-hidden="true"></i></a>
     </div>
     
     <footer role="contentinfo">
         <p>&copy; <span id="currentYear">2023</span> Munchies & Shukisha. All rights reserved.</p>
+        <p style="margin-top: 10px; font-size: 0.9rem;">
+            Contact: +254 113 110 743 | Email: richokello19@gmail.com
+        </p>
     </footer>
 
     <!-- Auth Modals -->
@@ -2866,6 +3459,92 @@
                     <input type="file" id="businessPermit" accept="image/*,.pdf">
                 </div>
             </div>
+
+            <!-- ===== SUBSCRIPTION PAYMENT SECTION ===== -->
+            <div class="payment-section">
+                <h3 style="margin-bottom: 20px; color: var(--primary);">Choose Your Subscription Plan</h3>
+                
+                <div class="subscription-plans">
+                    <div class="subscription-plan">
+                        <div class="plan-header">
+                            <div class="plan-name">Basic</div>
+                            <div class="plan-price">KSh 999</div>
+                            <div class="plan-period">per month</div>
+                        </div>
+                        <ul class="plan-features">
+                            <li><i class="fas fa-check"></i> Up to 10 menu items</li>
+                            <li><i class="fas fa-check"></i> Basic vendor profile</li>
+                            <li><i class="fas fa-check"></i> Order management</li>
+                            <li><i class="fas fa-check"></i> Customer reviews</li>
+                            <li class="disabled"><i class="fas fa-times"></i> Premium placement</li>
+                            <li class="disabled"><i class="fas fa-times"></i> Analytics dashboard</li>
+                            <li class="disabled"><i class="fas fa-times"></i> Marketing tools</li>
+                        </ul>
+                        <button class="btn" onclick="selectPlan('basic', 999)" style="width: 100%;">Select Basic</button>
+                    </div>
+                    
+                    <div class="subscription-plan popular">
+                        <div class="plan-header">
+                            <div class="plan-name">Professional</div>
+                            <div class="plan-price">KSh 1,999</div>
+                            <div class="plan-period">per month</div>
+                        </div>
+                        <ul class="plan-features">
+                            <li><i class="fas fa-check"></i> Up to 50 menu items</li>
+                            <li><i class="fas fa-check"></i> Enhanced vendor profile</li>
+                            <li><i class="fas fa-check"></i> Advanced order management</li>
+                            <li><i class="fas fa-check"></i> Customer reviews & ratings</li>
+                            <li><i class="fas fa-check"></i> Premium placement</li>
+                            <li><i class="fas fa-check"></i> Basic analytics</li>
+                            <li class="disabled"><i class="fas fa-times"></i> Advanced marketing</li>
+                        </ul>
+                        <button class="btn" onclick="selectPlan('professional', 1999)" style="width: 100%; background: var(--secondary);">Select Professional</button>
+                    </div>
+                    
+                    <div class="subscription-plan">
+                        <div class="plan-header">
+                            <div class="plan-name">Enterprise</div>
+                            <div class="plan-price">KSh 3,999</div>
+                            <div class="plan-period">per month</div>
+                        </div>
+                        <ul class="plan-features">
+                            <li><i class="fas fa-check"></i> Unlimited menu items</li>
+                            <li><i class="fas fa-check"></i> Premium vendor profile</li>
+                            <li><i class="fas fa-check"></i> Complete order management</li>
+                            <li><i class="fas fa-check"></i> Advanced review system</li>
+                            <li><i class="fas fa-check"></i> Top placement priority</li>
+                            <li><i class="fas fa-check"></i> Advanced analytics</li>
+                            <li><i class="fas fa-check"></i> Marketing & promotion tools</li>
+                        </ul>
+                        <button class="btn" onclick="selectPlan('enterprise', 3999)" style="width: 100%;">Select Enterprise</button>
+                    </div>
+                </div>
+
+                <div id="paymentSection" style="display: none;">
+                    <h4 style="margin: 25px 0 15px; color: var(--primary);">Complete Your Payment</h4>
+                    
+                    <div class="payment-methods">
+                        <div class="payment-method" onclick="selectPaymentMethod('mpesa')">
+                            <i class="fas fa-mobile-alt"></i>
+                            <span>M-Pesa</span>
+                        </div>
+                    </div>
+
+                    <div id="mpesaForm" class="mpesa-form active">
+                        <div class="form-input-group">
+                            <input type="tel" id="mpesaPhone" placeholder=" " aria-required="true" aria-describedby="mpesaPhoneError" value="0113110743">
+                            <label for="mpesaPhone">M-Pesa Phone Number</label>
+                            <div class="form-error" id="mpesaPhoneError" role="alert">Please enter your M-Pesa phone number</div>
+                        </div>
+                        <button class="btn" onclick="processMpesaPayment()" style="width: 100%; background: var(--success);">
+                            <i class="fas fa-lock"></i> Pay with M-Pesa
+                        </button>
+                        <p style="text-align: center; margin-top: 15px; color: #666; font-size: 0.9rem;">
+                            Use phone number: <strong>0113110743</strong> for M-Pesa payments
+                        </p>
+                    </div>
+                </div>
+            </div>
         </div>
         
         <div class="remember-me">
@@ -2873,7 +3552,7 @@
             <label for="termsAgree">I agree to the <a href="#" style="color: var(--secondary);">Terms of Service</a> and <a href="#" style="color: var(--secondary);">Privacy Policy</a></label>
         </div>
         
-        <button id="signupButton" onclick="signup()" aria-label="Create your account">Create Account</button>
+        <button id="signupButton" onclick="signup()" aria-label="Create your account" style="display: none;">Create Account</button>
         
         <div class="divider">
             <span>Or sign up with</span>
@@ -2938,10 +3617,6 @@
                     <i class="fas fa-mobile-alt" aria-hidden="true"></i>
                     <span>M-Pesa</span>
                 </div>
-                <div class="payment-option" onclick="selectPayment('card')" role="button" aria-label="Pay with card" tabindex="0">
-                    <i class="fas fa-credit-card" aria-hidden="true"></i>
-                    <span>Card</span>
-                </div>
                 <div class="payment-option" onclick="selectPayment('cash')" role="button" aria-label="Pay with cash" tabindex="0">
                     <i class="fas fa-money-bill-wave" aria-hidden="true"></i>
                     <span>Cash</span>
@@ -2950,24 +3625,9 @@
             
             <div id="mpesaForm" style="display: none;">
                 <div class="form-group">
-                    <input type="tel" placeholder="Phone Number" id="mpesaPhone" aria-label="M-Pesa phone number">
+                    <input type="tel" placeholder="Phone Number" id="mpesaPhone" aria-label="M-Pesa phone number" value="0113110743">
                 </div>
                 <button onclick="payWithMpesa()" class="btn" aria-label="Complete payment with M-Pesa">Pay with M-Pesa</button>
-            </div>
-            
-            <div id="cardForm" style="display: none;">
-                <div class="form-group">
-                    <input type="text" placeholder="Card Number" id="cardNumber" aria-label="Card number">
-                </div>
-                <div style="display: flex; gap: 10px;">
-                    <div class="form-group" style="flex: 1;">
-                        <input type="text" placeholder="MM/YY" id="cardExpiry" aria-label="Card expiry date">
-                    </div>
-                    <div class="form-group" style="flex: 1;">
-                        <input type="text" placeholder="CVV" id="cardCvv" aria-label="Card security code">
-                    </div>
-                </div>
-                <button onclick="payWithCard()" class="btn" aria-label="Complete payment with card">Pay with Card</button>
             </div>
             
             <div id="cashForm" style="display: none;">
@@ -2978,6 +3638,299 @@
     </div>
 
     <script>
+        // ===== FIREBASE CONFIGURATION =====
+        const firebaseConfig = {
+            apiKey: "AIzaSyCNulf_lX3VcwmameFUvkAf3D6d5c8w5CA",
+            authDomain: "munchies-and-shukisha.firebaseapp.com",
+            projectId: "munchies-and-shukisha",
+            storageBucket: "munchies-and-shukisha.firebasestorage.app",
+            messagingSenderId: "349555107843",
+            appId: "1:349555107843:web:2e23b5a31b460cb33c0636"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+
+        // Initialize Firebase services
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        const storage = firebase.storage();
+
+        // Firebase Auth State Listener
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                console.log('User logged in:', user.email);
+                updateAuthUI(user);
+                checkUserType(user.uid);
+            } else {
+                console.log('User logged out');
+                updateAuthUI(null);
+            }
+        });
+
+        // Update UI based on auth state
+        function updateAuthUI(user) {
+            const authLink = document.getElementById('authLink');
+            const vendorDashboardLink = document.getElementById('vendorDashboardLink');
+            
+            if (user) {
+                authLink.innerHTML = '<i class="fas fa-sign-out-alt"></i> <span class="nav-text">Logout</span>';
+                authLink.onclick = logout;
+                if (vendorDashboardLink) {
+                    checkUserType(user.uid);
+                }
+            } else {
+                authLink.innerHTML = '<i class="fas fa-user"></i> <span class="nav-text">Login</span>';
+                authLink.onclick = showLoginModal;
+                if (vendorDashboardLink) {
+                    vendorDashboardLink.style.display = 'none';
+                }
+            }
+        }
+
+        // Check if user is a vendor
+        async function checkUserType(uid) {
+            try {
+                const userDoc = await db.collection('users').doc(uid).get();
+                if (userDoc.exists) {
+                    const userData = userDoc.data();
+                    const vendorDashboardLink = document.getElementById('vendorDashboardLink');
+                    if (userData.userType === 'seller' && vendorDashboardLink) {
+                        vendorDashboardLink.style.display = 'list-item';
+                    }
+                }
+            } catch (error) {
+                console.error('Error checking user type:', error);
+            }
+        }
+
+        // Firebase Authentication Functions
+        async function login(email, password) {
+            try {
+                const userCredential = await auth.signInWithEmailAndPassword(email, password);
+                return { success: true, user: userCredential.user };
+            } catch (error) {
+                return { success: false, error: error.message };
+            }
+        }
+
+        async function signup(email, password, userData) {
+            try {
+                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                const user = userCredential.user;
+                
+                // Save user data to Firestore
+                await db.collection('users').doc(user.uid).set({
+                    email: user.email,
+                    name: userData.name,
+                    userType: userData.userType,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                // If user is a seller, create vendor profile
+                if (userData.userType === 'seller') {
+                    await createVendorProfile(user.uid, userData);
+                }
+                
+                return { success: true, user: user };
+            } catch (error) {
+                return { success: false, error: error.message };
+            }
+        }
+
+        async function createVendorProfile(uid, userData) {
+            try {
+                await db.collection('vendors').doc(uid).set({
+                    businessName: userData.businessName,
+                    businessLocation: userData.businessLocation,
+                    description: userData.description,
+                    businessType: userData.businessType || 'Food Vendor',
+                    owner: userData.email,
+                    status: 'pending',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+            } catch (error) {
+                console.error('Error creating vendor profile:', error);
+            }
+        }
+
+        async function logout() {
+            try {
+                await auth.signOut();
+                showToast('Logged out successfully', false, 'success');
+            } catch (error) {
+                console.error('Error logging out:', error);
+                showToast('Error logging out', true);
+            }
+        }
+
+        // ===== SUBSCRIPTION PAYMENT FUNCTIONS =====
+        let selectedPlan = null;
+        let selectedPlanPrice = 0;
+        let selectedPaymentMethod = '';
+
+        function selectPlan(plan, price) {
+            selectedPlan = plan;
+            selectedPlanPrice = price;
+            
+            // Show payment section
+            document.getElementById('paymentSection').style.display = 'block';
+            
+            // Hide the regular signup button
+            document.getElementById('signupButton').style.display = 'none';
+            
+            showToast(`Selected ${plan} plan - KSh ${price}/month`, false, 'success');
+        }
+
+        function selectPaymentMethod(method) {
+            selectedPaymentMethod = method;
+            
+            // Update UI
+            document.querySelectorAll('.payment-method').forEach(el => {
+                el.classList.remove('active');
+            });
+            event.target.closest('.payment-method').classList.add('active');
+            
+            // Show appropriate form
+            document.querySelectorAll('.mpesa-form, .card-form').forEach(el => {
+                el.classList.remove('active');
+            });
+            
+            if (method === 'mpesa') {
+                document.getElementById('mpesaForm').classList.add('active');
+            }
+        }
+
+        async function processMpesaPayment() {
+            if (!selectedPlan) {
+                showToast('Please select a subscription plan first', true);
+                return;
+            }
+
+            const phone = document.getElementById('mpesaPhone').value;
+            if (!phone) {
+                showToast('Please enter your M-Pesa phone number', true);
+                return;
+            }
+
+            // Show loading state
+            const button = event.target;
+            const originalText = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+            button.disabled = true;
+
+            try {
+                // Simulate M-Pesa payment processing
+                await new Promise(resolve => setTimeout(resolve, 3000));
+                
+                // Create subscription record
+                const user = auth.currentUser;
+                if (user) {
+                    await db.collection('subscriptions').doc(user.uid).set({
+                        userId: user.uid,
+                        plan: selectedPlan,
+                        price: selectedPlanPrice,
+                        status: 'active',
+                        paymentMethod: 'mpesa',
+                        mpesaPhone: phone,
+                        startDate: firebase.firestore.FieldValue.serverTimestamp(),
+                        endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+
+                    // Update vendor status to active
+                    await db.collection('vendors').doc(user.uid).update({
+                        status: 'active',
+                        subscriptionPlan: selectedPlan
+                    });
+                }
+
+                showToast('Payment successful! Your vendor account is now active.', false, 'success');
+                closeModals();
+                
+                // Reset form
+                resetPaymentForm();
+                
+            } catch (error) {
+                console.error('Payment error:', error);
+                showToast('Payment failed. Please try again.', true);
+            } finally {
+                button.innerHTML = originalText;
+                button.disabled = false;
+            }
+        }
+
+        function resetPaymentForm() {
+            selectedPlan = null;
+            selectedPlanPrice = 0;
+            selectedPaymentMethod = '';
+            document.getElementById('paymentSection').style.display = 'none';
+            document.getElementById('signupButton').style.display = 'block';
+            document.querySelectorAll('.payment-method').forEach(el => {
+                el.classList.remove('active');
+            });
+            document.querySelectorAll('.mpesa-form, .card-form').forEach(el => {
+                el.classList.remove('active');
+            });
+        }
+
+        // ===== CONTACT FUNCTIONS =====
+        function openWhatsApp() {
+            const phone = '254113110743';
+            const message = 'Hello Munchies & Shukisha! I would like to get more information about your services.';
+            const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+            window.open(url, '_blank');
+        }
+
+        function submitContactForm(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('contactModalName').value;
+            const email = document.getElementById('contactModalEmail').value;
+            const subject = document.getElementById('contactModalSubject').value;
+            const message = document.getElementById('contactModalMessage').value;
+
+            if (!name || !email || !subject || !message) {
+                showToast('Please fill in all fields', true);
+                return;
+            }
+
+            // Simulate form submission
+            showToast('Message sent successfully! We will get back to you soon.', false, 'success');
+            
+            // Reset form
+            document.getElementById('contactModalForm').reset();
+        }
+
+        // ADDED: Contact Modal Functions
+        function showContactModal() {
+            try {
+                closeModals();
+                overlay.style.display = 'block';
+                document.getElementById('contactModal').style.display = 'block';
+                document.getElementById('contactModal').setAttribute('aria-hidden', 'false');
+            } catch (error) {
+                console.error("Error showing contact modal:", error);
+                showToast("Error opening contact form", true);
+            }
+        }
+
+        function closeContactModal() {
+            try {
+                document.getElementById('contactModal').style.display = 'none';
+                document.getElementById('contactModal').setAttribute('aria-hidden', 'true');
+                overlay.style.display = 'none';
+            } catch (error) {
+                console.error("Error closing contact modal:", error);
+            }
+        }
+
+        // Export for use in other files
+        window.auth = auth;
+        window.db = db;
+        window.storage = storage;
+        window.firebaseAuth = { login, signup, logout };
+
         // Set current year in footer
         document.getElementById('currentYear').textContent = new Date().getFullYear();
 
@@ -3015,7 +3968,6 @@
         // Cart state
         let cart = [];
         let isLoggedIn = false;
-        let selectedPaymentMethod = '';
         let currentUser = null;
         let vendors = [];
 
@@ -3037,6 +3989,9 @@
             setupAuthEnhancements();
             setupSearchAndFilter();
             preloadCriticalImages();
+            
+            // Setup contact form
+            document.getElementById('contactModalForm').addEventListener('submit', submitContactForm);
             
             // ===== ACCESSIBILITY: ENHANCE KEYBOARD NAVIGATION =====
             enhanceKeyboardNavigation();
@@ -3792,31 +4747,6 @@
             window.scrollTo(0, 0);
         }
 
-        // Auth state listener
-        function simulateAuthState() {
-            if (sessionStorage.getItem('isLoggedIn') === 'true') {
-                isLoggedIn = true;
-                const userData = JSON.parse(sessionStorage.getItem('userData') || '{}');
-                currentUser = userData;
-                
-                authLink.innerHTML = '<i class="fas fa-sign-out-alt"></i> <span class="nav-text">Logout</span>';
-                authLink.onclick = logout;
-                authLink.setAttribute('aria-label', 'Logout');
-                
-                // Show vendor dashboard link if user is a seller
-                if (userData.userType === 'seller') {
-                    vendorDashboardLink.style.display = 'list-item';
-                }
-            } else {
-                isLoggedIn = false;
-                currentUser = null;
-                authLink.innerHTML = '<i class="fas fa-user"></i> <span class="nav-text">Login</span>';
-                authLink.onclick = showLoginModal;
-                authLink.setAttribute('aria-label', 'Login');
-                vendorDashboardLink.style.display = 'none';
-            }
-        }
-
         // Show login modal
         function showLoginModal() {
             try {
@@ -3861,7 +4791,7 @@
             }
         }
 
-        // Close all modals
+        // UPDATED: Close all modals to include contact modal
         function closeModals() {
             try {
                 overlay.style.display = 'none';
@@ -3871,6 +4801,10 @@
                 signupModal.setAttribute('aria-hidden', 'true');
                 forgotPasswordModal.style.display = 'none';
                 forgotPasswordModal.setAttribute('aria-hidden', 'true');
+                checkoutModal.style.display = 'none';
+                checkoutModal.setAttribute('aria-hidden', 'true');
+                document.getElementById('contactModal').style.display = 'none';
+                document.getElementById('contactModal').setAttribute('aria-hidden', 'true');
             } catch (error) {
                 console.error("Error closing modals:", error);
             }
@@ -3966,32 +4900,28 @@
                 
                 showToast("Logging in...");
                 
-                // Simulate login process
-                setTimeout(() => {
-                    // For demo purposes, create a simple user object
-                    const userData = {
-                        email: email,
-                        name: email.split('@')[0],
-                        userType: 'buyer' // Default to buyer
-                    };
-                    
-                    sessionStorage.setItem('isLoggedIn', 'true');
-                    sessionStorage.setItem('userData', JSON.stringify(userData));
-                    
-                    // If remember me is checked, store in localStorage
-                    if (rememberMe) {
-                        localStorage.setItem('rememberedEmail', email);
+                // Use Firebase login
+                firebaseAuth.login(email, password).then(result => {
+                    if (result.success) {
+                        showToast("Login successful!", false, 'success');
+                        isLoggedIn = true;
+                        currentUser = result.user;
+                        closeModals();
+                        
+                        // If remember me is checked, store in localStorage
+                        if (rememberMe) {
+                            localStorage.setItem('rememberedEmail', email);
+                        }
+                    } else {
+                        showToast(result.error, true);
                     }
-                    
-                    simulateAuthState();
-                    closeModals();
-                    showToast("Login successful!", false, 'success');
-                    isLoggedIn = true;
-                    currentUser = userData;
                     
                     // Remove loading state
                     hideLoadingState(loginButton, originalText);
-                }, 1500);
+                }).catch(error => {
+                    showToast("An unexpected error occurred", true);
+                    hideLoadingState(loginButton, originalText);
+                });
             } catch (error) {
                 console.error("Login error:", error);
                 showToast("An unexpected error occurred", true);
@@ -4046,52 +4976,41 @@
                 
                 showToast("Creating account...");
                 
-                // Simulate signup process
-                setTimeout(() => {
-                    const userData = {
-                        name: name,
-                        email: email,
-                        userType: userType
-                    };
-                    
-                    // If user is a seller, create a vendor profile
-                    if (userType === 'seller') {
-                        const businessName = document.getElementById('businessName').value;
-                        const businessLocation = document.getElementById('businessLocation').value;
-                        const description = document.getElementById('description').value;
-                        
-                        const vendor = {
-                            id: 'vendor-' + Date.now(),
-                            businessName: businessName,
-                            businessLocation: businessLocation,
-                            description: description,
-                            owner: email,
-                            businessType: document.querySelector('select') ? document.querySelector('select').value : 'Food Vendor',
-                            // In a real app, you would handle file uploads properly
-                            logo: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
-                            photos: ['https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80']
-                        };
-                        
-                        vendors.push(vendor);
-                        saveVendors();
-                        renderVendors();
-                    }
-                    
-                    sessionStorage.setItem('isLoggedIn', 'true');
-                    sessionStorage.setItem('userData', JSON.stringify(userData));
-                    simulateAuthState();
-                    closeModals();
-                    if (userType === 'seller') {
-                        showToast("Account created! Seller verification pending.", false, 'success');
+                // Prepare user data
+                const userData = {
+                    name: name,
+                    userType: userType
+                };
+                
+                // Add vendor-specific data if seller
+                if (userType === 'seller') {
+                    userData.businessName = document.getElementById('businessName').value;
+                    userData.businessLocation = document.getElementById('businessLocation').value;
+                    userData.description = document.getElementById('description').value;
+                    userData.businessType = document.getElementById('deliveryMethod') ? document.getElementById('deliveryMethod').value : 'Food Vendor';
+                }
+                
+                // Use Firebase signup
+                firebaseAuth.signup(email, password, userData).then(result => {
+                    if (result.success) {
+                        if (userType === 'seller') {
+                            showToast("Account created! Seller verification pending.", false, 'success');
+                        } else {
+                            showToast("Account created successfully!", false, 'success');
+                        }
+                        isLoggedIn = true;
+                        currentUser = result.user;
+                        closeModals();
                     } else {
-                        showToast("Account created successfully!", false, 'success');
+                        showToast(result.error, true);
                     }
-                    isLoggedIn = true;
-                    currentUser = userData;
                     
                     // Remove loading state
                     hideLoadingState(signupButton, originalText);
-                }, 2000);
+                }).catch(error => {
+                    showToast("An unexpected error occurred", true);
+                    hideLoadingState(signupButton, originalText);
+                });
             } catch (error) {
                 console.error("Signup error:", error);
                 showToast("An unexpected error occurred", true);
@@ -4123,14 +5042,15 @@
                 
                 showToast("Sending reset instructions...");
                 
-                // Simulate reset process
-                setTimeout(() => {
+                // Use Firebase password reset
+                auth.sendPasswordResetEmail(email).then(() => {
                     closeModals();
                     showToast("Password reset instructions sent to your email", false, 'success');
-                    
-                    // Remove loading state
                     hideLoadingState(resetButton, originalText);
-                }, 1500);
+                }).catch(error => {
+                    showToast("Error sending reset email: " + error.message, true);
+                    hideLoadingState(resetButton, originalText);
+                });
             } catch (error) {
                 console.error("Reset password error:", error);
                 showToast("An unexpected error occurred", true);
@@ -4146,121 +5066,21 @@
         // Google sign-in
         function signInWithGoogle() {
             try {
-                showToast("Signing in with Google...");
-                
-                // Show loading state
-                const googleButton = document.querySelector('.social-btn.google');
-                const originalText = googleButton.innerHTML;
-                googleButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Connecting...';
-                googleButton.disabled = true;
-                
-                // Simulate Google login process
-                setTimeout(() => {
-                    const userData = {
-                        name: 'Google User',
-                        email: 'googleuser@example.com',
-                        userType: 'buyer'
-                    };
-                    
-                    sessionStorage.setItem('isLoggedIn', 'true');
-                    sessionStorage.setItem('userData', JSON.stringify(userData));
-                    simulateAuthState();
-                    closeModals();
-                    showToast("Google login successful!", false, 'success');
-                    isLoggedIn = true;
-                    currentUser = userData;
-                    
-                    // Restore button
-                    googleButton.innerHTML = originalText;
-                    googleButton.disabled = false;
-                }, 1200);
+                showToast("Google sign-in not yet implemented", true);
             } catch (error) {
                 console.error("Google sign-in error:", error);
                 showToast("An unexpected error occurred", true);
-                
-                // Restore button on error
-                const googleButton = document.querySelector('.social-btn.google');
-                if (googleButton) {
-                    googleButton.innerHTML = '<i class="fab fa-google"></i> Google';
-                    googleButton.disabled = false;
-                }
             }
         }
 
         // Facebook sign-in
         function signInWithFacebook() {
             try {
-                showToast("Signing in with Facebook...");
-                
-                // Show loading state
-                const facebookButton = document.querySelector('.social-btn.facebook');
-                const originalText = facebookButton.innerHTML;
-                facebookButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Connecting...';
-                facebookButton.disabled = true;
-                
-                // Simulate Facebook login process
-                setTimeout(() => {
-                    const userData = {
-                        name: 'Facebook User',
-                        email: 'facebookuser@example.com',
-                        userType: 'buyer'
-                    };
-                    
-                    sessionStorage.setItem('isLoggedIn', 'true');
-                    sessionStorage.setItem('userData', JSON.stringify(userData));
-                    simulateAuthState();
-                    closeModals();
-                    showToast("Facebook login successful!", false, 'success');
-                    isLoggedIn = true;
-                    currentUser = userData;
-                    
-                    // Restore button
-                    facebookButton.innerHTML = originalText;
-                    facebookButton.disabled = false;
-                }, 1200);
+                showToast("Facebook sign-in not yet implemented", true);
             } catch (error) {
                 console.error("Facebook sign-in error:", error);
                 showToast("An unexpected error occurred", true);
-                
-                // Restore button on error
-                const facebookButton = document.querySelector('.social-btn.facebook');
-                if (facebookButton) {
-                    facebookButton.innerHTML = '<i class="fab fa-facebook-f"></i> Facebook';
-                    facebookButton.disabled = false;
-                }
             }
-        }
-
-        // Logout function
-        function logout() {
-            try {
-                showToast("Logging out...");
-                setTimeout(() => {
-                    sessionStorage.removeItem('isLoggedIn');
-                    sessionStorage.removeItem('userData');
-                    simulateAuthState();
-                    showToast("Logged out successfully", false, 'success');
-                    isLoggedIn = false;
-                    currentUser = null;
-                    cart = [];
-                    updateCartCount();
-                    saveCart();
-                }, 800);
-            } catch (error) {
-                console.error("Logout error:", error);
-                showToast("An unexpected error occurred", true);
-            }
-        }
-
-        // Show vendor dashboard
-        function showVendorDashboard() {
-            if (!isLoggedIn || currentUser.userType !== 'seller') {
-                showToast("Vendor dashboard is only available for sellers", true);
-                return;
-            }
-            
-            // Redirect to vendor dashboard page
-            window.location.href = "vendor-dashboard.html";
         }
 
         // Add to cart function
@@ -4449,7 +5269,6 @@
             
             // Show appropriate form
             document.getElementById('mpesaForm').style.display = method === 'mpesa' ? 'block' : 'none';
-            document.getElementById('cardForm').style.display = method === 'card' ? 'block' : 'none';
             document.getElementById('cashForm').style.display = method === 'cash' ? 'block' : 'none';
         }
 
@@ -4465,27 +5284,6 @@
             showToast("Sending M-Pesa request...");
             
             // Simulate M-Pesa payment
-            setTimeout(() => {
-                closeCheckout();
-                placeOrder();
-                showToast("Payment successful! Order placed.", false, 'success');
-            }, 2000);
-        }
-
-        // Pay with card
-        function payWithCard() {
-            const cardNumber = document.getElementById('cardNumber').value;
-            const cardExpiry = document.getElementById('cardExpiry').value;
-            const cardCvv = document.getElementById('cardCvv').value;
-            
-            if (!cardNumber || !cardExpiry || !cardCvv) {
-                showToast("Please fill in all card details", true);
-                return;
-            }
-            
-            showToast("Processing card payment...");
-            
-            // Simulate card payment
             setTimeout(() => {
                 closeCheckout();
                 placeOrder();
@@ -4543,11 +5341,11 @@
         signupModal.addEventListener('click', (e) => e.stopPropagation());
         forgotPasswordModal.addEventListener('click', (e) => e.stopPropagation());
         checkoutModal.addEventListener('click', (e) => e.stopPropagation());
+        document.getElementById('contactModal').addEventListener('click', (e) => e.stopPropagation());
 
         // Initialize the app
         window.addEventListener('DOMContentLoaded', () => {
             init();
-            simulateAuthState();
             
             // Check if there's a remembered email
             const rememberedEmail = localStorage.getItem('rememberedEmail');
