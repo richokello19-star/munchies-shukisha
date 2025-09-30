@@ -213,8 +213,140 @@ function setupServiceWorker() {
   }
 }
 
-// Enhanced addToCart function with animation
-function enhancedAddToCart(itemName, itemPrice) {
+// FIXED: Enhanced vendor profile image handling
+function getVendorProfileImage(vendor) {
+  // Check for vendor's uploaded images in order of priority
+  if (vendor.businessLogo && vendor.businessLogo !== '') {
+    return vendor.businessLogo;
+  }
+  if (vendor.logo && vendor.logo !== '') {
+    return vendor.logo;
+  }
+  if (vendor.profileImage && vendor.profileImage !== '') {
+    return vendor.profileImage;
+  }
+  if (vendor.photos && vendor.photos.length > 0) {
+    return vendor.photos[0];
+  }
+  
+  // Fallback to a generic food image instead of default vendor image
+  return 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80';
+}
+
+// FIXED: Enhanced vendor creation with proper image handling
+async function createVendorProfile(uid, userData) {
+  try {
+    let logoUrl = '';
+    let photosUrls = [];
+    
+    // Handle logo upload if provided
+    const logoFile = document.getElementById('businessLogo')?.files[0];
+    if (logoFile) {
+      logoUrl = await uploadVendorImage(logoFile, `vendors/${uid}/logo`);
+    }
+    
+    // Handle business photos upload if provided
+    const photosFiles = document.getElementById('businessPhotos')?.files;
+    if (photosFiles && photosFiles.length > 0) {
+      for (let i = 0; i < photosFiles.length; i++) {
+        const photoUrl = await uploadVendorImage(photosFiles[i], `vendors/${uid}/photos/${i}`);
+        photosUrls.push(photoUrl);
+      }
+    }
+    
+    const vendorData = {
+      businessName: userData.businessName,
+      businessLocation: userData.businessLocation,
+      description: userData.description,
+      businessType: userData.businessType || 'Food Vendor',
+      owner: userData.email,
+      status: 'pending',
+      // Store uploaded images properly
+      businessLogo: logoUrl,
+      photos: photosUrls,
+      cuisineType: userData.cuisineType || 'Kenyan',
+      deliveryTime: userData.deliveryTime || 45,
+      minPrice: userData.minPrice || 300,
+      rating: 0,
+      reviewCount: 0,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    };
+    
+    await db.collection('vendors').doc(uid).set(vendorData);
+    
+    // Update the vendors array and re-render
+    vendors.push({
+      id: uid,
+      ...vendorData
+    });
+    saveVendors();
+    renderVendors();
+    
+  } catch (error) {
+    console.error('Error creating vendor profile:', error);
+    throw error;
+  }
+}
+
+// FIXED: Upload vendor image function
+async function uploadVendorImage(file, path) {
+  try {
+    const storageRef = storage.ref();
+    const imageRef = storageRef.child(path);
+    const snapshot = await imageRef.put(file);
+    const downloadURL = await snapshot.ref.getDownloadURL();
+    return downloadURL;
+  } catch (error) {
+    console.error('Error uploading vendor image:', error);
+    throw error;
+  }
+}
+
+// FIXED: Enhanced vendor rendering - removed sample dishes and fixed image handling
+function renderFilteredVendors(filteredVendors) {
+  if (filteredVendors.length === 0) {
+    vendorsContainer.innerHTML = `
+      <div class="no-results">
+        <i class="fas fa-utensils" aria-hidden="true"></i>
+        <h3>No vendors found</h3>
+        <p>Try adjusting your search or filters to find what you're looking for.</p>
+        <button class="btn" onclick="resetSearchAndFilter()" style="margin-top: 20px;" aria-label="Reset all filters">Reset Filters</button>
+      </div>
+    `;
+    return;
+  }
+
+  let vendorsHTML = '';
+  
+  filteredVendors.forEach(vendor => {
+    // Use the fixed vendor profile image function
+    const vendorImage = getVendorProfileImage(vendor);
+    
+    vendorsHTML += `
+      <div class="menu-item" onclick="showRestaurantDetail('${vendor.id}')" role="button" tabindex="0" aria-label="View ${vendor.businessName} details">
+        <img src="${vendorImage}" alt="${vendor.businessName}" class="menu-item-img" loading="lazy">
+        <div class="menu-item-content">
+          <span class="vendor-badge">${vendor.businessType || 'Food Vendor'}</span>
+          <h3>${vendor.businessName}</h3>
+          <p>${vendor.description || 'Delicious food made with love and tradition.'}</p>
+          <div class="rating" aria-label="Rating: ${vendor.rating || 0} out of 5 stars">
+            ${generateStarRating(vendor.rating || 0)}
+            <span>(${vendor.reviewCount || 0} reviews)</span>
+          </div>
+          <p class="price">From KSh ${vendor.minPrice || 300}</p>
+          <button class="btn" onclick="event.stopPropagation(); showRestaurantDetail('${vendor.id}')" aria-label="View ${vendor.businessName} menu">
+            View Menu
+          </button>
+        </div>
+      </div>
+    `;
+  });
+  
+  vendorsContainer.innerHTML = vendorsHTML;
+}
+
+// FIXED: Enhanced addToCart function - removed sample dish references
+function enhancedAddToCart(itemName, itemPrice, vendorId) {
   if (!isLoggedIn) {
     protectedOverlay.style.display = 'flex';
     return;
@@ -223,6 +355,7 @@ function enhancedAddToCart(itemName, itemPrice) {
   cart.push({
     name: itemName,
     price: itemPrice,
+    vendorId: vendorId,
     id: Date.now().toString()
   });
   updateCartCount();
@@ -236,6 +369,124 @@ function enhancedAddToCart(itemName, itemPrice) {
   }, 1000);
   
   showToast(`${itemName} added to cart!`, false, 'success');
+}
+
+// FIXED: Load vendors from Firebase instead of localStorage
+async function loadVendors() {
+  try {
+    const vendorsSnapshot = await db.collection('vendors').where('status', '==', 'active').get();
+    vendors = [];
+    
+    vendorsSnapshot.forEach(doc => {
+      const vendorData = doc.data();
+      vendors.push({
+        id: doc.id,
+        ...vendorData
+      });
+    });
+    
+    renderVendors();
+    
+  } catch (error) {
+    console.error("Error loading vendors:", error);
+    showToast("Error loading vendors", true);
+    // Fallback to empty vendors array
+    vendors = [];
+    renderVendors();
+  }
+}
+
+// FIXED: Enhanced vendor signup with image validation
+async function signup() {
+  try {
+    const name = document.getElementById('signupName').value;
+    const email = document.getElementById('signupEmail').value;
+    const password = document.getElementById('signupPassword').value;
+    const userType = document.getElementById('userType').value;
+    const termsAgreed = document.getElementById('termsAgree').checked;
+
+    // Validate form
+    const isNameValid = validateField(document.getElementById('signupName'), 'signupNameError', 'Please enter your full name');
+    const isEmailValid = validateEmail(document.getElementById('signupEmail'), 'signupEmailError');
+    const isPasswordValid = validatePassword(document.getElementById('signupPassword'), 'signupPasswordError');
+    
+    if (!isNameValid || !isEmailValid || !isPasswordValid) {
+      showToast("Please fix the errors in the form", true);
+      return;
+    }
+    
+    if (!termsAgreed) {
+      showToast("Please agree to the Terms of Service and Privacy Policy", true);
+      return;
+    }
+
+    // Additional validation for sellers
+    if (userType === 'seller') {
+      const businessName = document.getElementById('businessName').value;
+      const businessLocation = document.getElementById('businessLocation').value;
+      
+      if (!businessName || !businessLocation) {
+        showToast("As a seller, please provide your business details", true);
+        return;
+      }
+    }
+
+    // Show enhanced loading state
+    const signupButton = document.getElementById('signupButton');
+    const originalText = showLoadingState(signupButton, 'Creating account...');
+    
+    showToast("Creating account...");
+    
+    // Prepare user data
+    const userData = {
+      name: name,
+      userType: userType
+    };
+    
+    // Add vendor-specific data if seller
+    if (userType === 'seller') {
+      userData.businessName = document.getElementById('businessName').value;
+      userData.businessLocation = document.getElementById('businessLocation').value;
+      userData.description = document.getElementById('description').value;
+      userData.businessType = document.getElementById('deliveryMethod') ? document.getElementById('deliveryMethod').value : 'Food Vendor';
+    }
+    
+    // Use Firebase signup
+    firebaseAuth.signup(email, password, userData).then(result => {
+      if (result.success) {
+        if (userType === 'seller') {
+          showToast("Account created! Your vendor profile is being set up.", false, 'success');
+        } else {
+          showToast("Account created successfully!", false, 'success');
+        }
+        isLoggedIn = true;
+        currentUser = result.user;
+        closeModals();
+        
+        // Reload vendors if user is a seller
+        if (userType === 'seller') {
+          loadVendors();
+        }
+      } else {
+        showToast(result.error, true);
+      }
+      
+      // Remove loading state
+      hideLoadingState(signupButton, originalText);
+    }).catch(error => {
+      showToast("An unexpected error occurred", true);
+      hideLoadingState(signupButton, originalText);
+    });
+  } catch (error) {
+    console.error("Signup error:", error);
+    showToast("An unexpected error occurred", true);
+    
+    // Remove loading state
+    const signupButton = document.getElementById('signupButton');
+    if (signupButton) {
+      hideLoadingState(signupButton, 'Create Account');
+    }
+  }
 }
 
 // Enhanced showToast function with more options

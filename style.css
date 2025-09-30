@@ -20,6 +20,16 @@ html {
     scroll-behavior: smooth;
 }
 
+/* ===== ACCESSIBILITY: REDUCED MOTION SUPPORT ===== */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
 body {
     font-family: 'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: var(--light);
@@ -28,12 +38,29 @@ body {
     min-height: 100vh;
     padding-bottom: 100px;
     line-height: 1.6;
-    padding-top: 150px; /* Fixed header spacing */
+    padding-top: 150px;
+    font-display: swap;
+}
+
+/* ===== ACCESSIBILITY: SKIP TO CONTENT LINK ===== */
+.skip-to-content {
+    position: absolute;
+    top: -40px;
+    left: 6px;
+    background: var(--secondary);
+    color: white;
+    padding: 8px;
+    text-decoration: none;
+    border-radius: 4px;
+    z-index: 10000;
+    transition: top 0.3s ease;
+}
+
+.skip-to-content:focus {
+    top: 6px;
 }
 
 /* ===== MOBILE RESPONSIVENESS FIXES ===== */
-
-/* Mobile header spacing fixes */
 @media (max-width: 768px) {
     body {
         padding-top: 120px;
@@ -62,7 +89,7 @@ body {
     
     /* Larger form elements for mobile */
     input, select, textarea {
-        font-size: 16px !important; /* Prevents zoom on iOS */
+        font-size: 16px !important;
         padding: 12px !important;
         min-height: 44px !important;
     }
@@ -101,6 +128,7 @@ header {
     z-index: 1000;
     transition: all 0.4s ease;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: translateZ(0);
 }
 
 .header-content {
@@ -301,6 +329,7 @@ header.scrolled nav a {
     text-align: center;
     position: relative;
     padding: 0 20px;
+    will-change: transform;
 }
 
 .hero-content {
@@ -437,6 +466,26 @@ header.scrolled nav a {
     flex-direction: column;
     height: 100%;
     cursor: pointer;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    animation: slideUp 0.5s ease forwards;
+    opacity: 0;
+}
+
+.menu-item:nth-child(1) { animation-delay: 0.1s; }
+.menu-item:nth-child(2) { animation-delay: 0.2s; }
+.menu-item:nth-child(3) { animation-delay: 0.3s; }
+.menu-item:nth-child(4) { animation-delay: 0.4s; }
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .menu-item:hover {
@@ -449,6 +498,9 @@ header.scrolled nav a {
     height: 220px;
     object-fit: cover;
     transition: transform 0.3s ease;
+    loading: lazy;
+    decoding: async;
+    aspect-ratio: 16/9;
 }
 
 .menu-item:hover .menu-item-img {
@@ -497,22 +549,37 @@ footer {
     width: 100%;
 }
 
-/* Enhanced CSS for Munchies & Shukisha */
-
-/* Animation for page transitions */
-.page-transition {
-    animation: fadeIn 0.5s ease-in-out;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* Improved focus styles for better accessibility */
+/* ===== ACCESSIBILITY: FOCUS STYLES ===== */
 button:focus, a:focus, input:focus, select:focus, textarea:focus {
     outline: 3px solid var(--secondary);
     outline-offset: 2px;
+}
+
+/* ===== ACCESSIBILITY: HIGH CONTRAST SUPPORT ===== */
+@media (prefers-contrast: high) {
+    :root {
+        --primary: #000000;
+        --secondary: #0066CC;
+        --accent: #CC0000;
+        --light: #FFFFFF;
+    }
+    
+    .btn {
+        border: 2px solid var(--primary);
+    }
+}
+
+/* ===== PERFORMANCE OPTIMIZATIONS ===== */
+.menu-item, .feature-card, .btn, .cart-icon {
+    will-change: transform;
+    backface-visibility: hidden;
+    transform: translateZ(0);
+}
+
+/* ===== IMAGE OPTIMIZATIONS ===== */
+.menu-item-img, .logo-icon img {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
 }
 
 /* Loading animation */
@@ -530,52 +597,204 @@ button:focus, a:focus, input:focus, select:focus, textarea:focus {
     to { transform: rotate(360deg); }
 }
 
-/* Pulse animation for call-to-action elements */
-.pulse {
-    animation: pulse 2s infinite;
+/* Animation for the cart icon when items are added */
+.cart-icon.added {
+    animation: bounce 0.5s;
 }
 
-@keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-    100% { transform: scale(1); }
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+    40% {transform: translateY(-20px);}
+    60% {transform: translateY(-10px);}
 }
 
-/* Staggered animation for menu items */
-.menu-item {
-    animation: slideUp 0.5s ease forwards;
-    opacity: 0;
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
 }
 
-.menu-item:nth-child(1) { animation-delay: 0.1s; }
-.menu-item:nth-child(2) { animation-delay: 0.2s; }
-.menu-item:nth-child(3) { animation-delay: 0.3s; }
-.menu-item:nth-child(4) { animation-delay: 0.4s; }
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
 
-@keyframes slideUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
+::-webkit-scrollbar-thumb {
+    background: var(--secondary);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #2a93d5;
+}
+
+/* ===== MOBILE FIXES FOR REPORTED ISSUES ===== */
+@media (max-width: 768px) {
+    /* Fix social icons position */
+    .social-icons {
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        flex-direction: row;
+        gap: 15px;
     }
-    to {
-        opacity: 1;
-        transform: translateY(0);
+    
+    .social-icons a {
+        width: 45px;
+        height: 45px;
+        font-size: 20px;
+    }
+    
+    /* Fix header size */
+    header {
+        padding: 10px 0;
+    }
+    
+    .header-content {
+        padding: 10px 15px;
+    }
+    
+    .logo {
+        font-size: 1.5rem;
+    }
+    
+    .logo-icon {
+        width: 35px;
+        height: 35px;
+    }
+    
+    .brand-names {
+        font-size: 1rem;
+    }
+    
+    /* Fix hero background image */
+    .hero {
+        background: linear-gradient(135deg, rgba(17, 21, 28, 0.85) 0%, rgba(17, 21, 28, 0.7) 100%), 
+                    url('https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        height: 350px;
+        background-attachment: scroll;
+    }
+    
+    .hero-content {
+        margin: 20px;
+        padding: 25px 20px;
+    }
+    
+    .hero h1 {
+        font-size: 2rem;
+        margin-bottom: 15px;
+    }
+    
+    .hero p {
+        font-size: 1.1rem;
+        margin-bottom: 20px;
+    }
+    
+    /* Adjust body padding for fixed header */
+    body {
+        padding-top: 120px;
     }
 }
 
-/* Improved hover effects for cards */
-.feature-card, .menu-item {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+@media (max-width: 480px) {
+    .hero {
+        height: 350px;
+    }
+    
+    .hero h1 {
+        font-size: 2rem;
+    }
+    
+    .hero p {
+        font-size: 1.1rem;
+    }
+    
+    .logo {
+        font-size: 2rem;
+    }
+    
+    .brand-names {
+        font-size: 1.5rem;
+    }
+    
+    .menu h2 {
+        font-size: 1.8rem;
+    }
+    
+    .menu-items {
+        gap: 20px;
+    }
+    
+    .menu-item-img {
+        height: 180px;
+    }
+    
+    /* Social icons mobile fix */
+    .social-icons {
+        bottom: 15px;
+    }
+    
+    .social-icons a {
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+    }
+    
+    /* Ensure all interactive elements are mobile-friendly */
+    select, button, [role="button"] {
+        touch-action: manipulation;
+    }
+    
+    /* Prevent horizontal scrolling */
+    body {
+        overflow-x: hidden;
+        width: 100%;
+    }
+    
+    /* Improve tap highlights */
+    a, button {
+        -webkit-tap-highlight-color: rgba(56, 182, 255, 0.3);
+    }
 }
 
-.feature-card:hover, .menu-item:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+/* Additional mobile-first improvements */
+@media (max-width: 360px) {
+    body {
+        padding-top: 90px;
+    }
+    
+    .hero {
+        height: 300px;
+    }
+    
+    .hero h1 {
+        font-size: 1.8rem;
+    }
+    
+    .hero p {
+        font-size: 1rem;
+    }
+    
+    .menu h2 {
+        font-size: 1.6rem;
+    }
+    
+    .menu-items {
+        grid-template-columns: 1fr;
+    }
 }
 
-/* Parallax effect for hero section */
-.hero {
-    background-attachment: fixed;
+/* Print styles */
+@media print {
+    .btn, nav, footer {
+        display: none;
+    }
+    
+    body {
+        color: black;
+        background: white;
+    }
 }
 
 /* Mobile menu for smaller screens */
@@ -645,204 +864,9 @@ button:focus, a:focus, input:focus, select:focus, textarea:focus {
     display: block;
 }
 
-/* Animation for the cart icon when items are added */
-.cart-icon.added {
-    animation: bounce 0.5s;
-}
-
-@keyframes bounce {
-    0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
-    40% {transform: translateY(-20px);}
-    60% {transform: translateY(-10px);}
-}
-
-/* Floating animation for the WhatsApp button */
-.floating {
-    animation: float 3s ease-in-out infinite;
-}
-
-@keyframes float {
-    0% { transform: translateY(0px); }
-    50% { transform: translateY(-10px); }
-    100% { transform: translateY(0px); }
-}
-
-/* Custom scrollbar */
-::-webkit-scrollbar {
-    width: 8px;
-}
-
-::-webkit-scrollbar-track {
-    background: #f1f1f1;
-}
-
-::-webkit-scrollbar-thumb {
-    background: var(--secondary);
-    border-radius: 10px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: #2a93d5;
-}
-
-/* ===== ENHANCED MOBILE OPTIMIZATIONS ===== */
-@media (max-width: 768px) {
+/* Fix for iOS Safari background images */
+@supports (-webkit-touch-callout: none) {
     .hero {
-        height: 400px;
         background-attachment: scroll;
-        padding: 0 15px;
-    }
-    
-    .hero h1 {
-        font-size: 2.5rem;
-        line-height: 1.3;
-    }
-    
-    .hero p {
-        font-size: 1.2rem;
-        margin-bottom: 25px;
-    }
-    
-    .hero-content {
-        padding: 25px 20px;
-        margin: 0 10px;
-    }
-    
-    .btn-container {
-        flex-direction: column;
-        align-items: center;
-        gap: 15px;
-    }
-    
-    .btn {
-        width: 100%;
-        max-width: 280px;
-        padding: 16px 24px;
-        font-size: 1.1rem;
-    }
-    
-    .menu {
-        padding: 50px 15px;
-    }
-    
-    .menu h2 {
-        font-size: 2.2rem;
-    }
-    
-    .menu p {
-        font-size: 1.1rem;
-        padding: 0 10px;
-    }
-    
-    .menu-items {
-        grid-template-columns: 1fr;
-        gap: 25px;
-        padding: 0 10px;
-    }
-    
-    .menu-item {
-        margin: 0 auto;
-        max-width: 400px;
-    }
-    
-    .menu-item-content {
-        padding: 20px;
-    }
-    
-    .menu-item h3 {
-        font-size: 1.4rem;
-    }
-    
-    .price {
-        font-size: 1.6rem;
-    }
-}
-
-@media (max-width: 480px) {
-    .hero {
-        height: 350px;
-    }
-    
-    .hero h1 {
-        font-size: 2rem;
-    }
-    
-    .hero p {
-        font-size: 1.1rem;
-    }
-    
-    .logo {
-        font-size: 2rem;
-    }
-    
-    .brand-names {
-        font-size: 1.5rem;
-    }
-    
-    .menu h2 {
-        font-size: 1.8rem;
-    }
-    
-    .menu-items {
-        gap: 20px;
-    }
-    
-    .menu-item-img {
-        height: 180px;
-    }
-    
-    /* Ensure all interactive elements are mobile-friendly */
-    select, button, [role="button"] {
-        touch-action: manipulation;
-    }
-    
-    /* Prevent horizontal scrolling */
-    body {
-        overflow-x: hidden;
-        width: 100%;
-    }
-    
-    /* Improve tap highlights */
-    a, button {
-        -webkit-tap-highlight-color: rgba(56, 182, 255, 0.3);
-    }
-}
-
-/* Additional mobile-first improvements */
-@media (max-width: 360px) {
-    body {
-        padding-top: 90px;
-    }
-    
-    .hero {
-        height: 300px;
-    }
-    
-    .hero h1 {
-        font-size: 1.8rem;
-    }
-    
-    .hero p {
-        font-size: 1rem;
-    }
-    
-    .menu h2 {
-        font-size: 1.6rem;
-    }
-    
-    .menu-items {
-        grid-template-columns: 1fr;
-    }
-}
-
-/* Print styles */
-@media print {
-    .btn, nav, footer {
-        display: none;
-    }
-    
-    body {
-        color: black;
-        background: white;
     }
 }
