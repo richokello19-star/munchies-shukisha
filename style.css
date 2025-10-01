@@ -31,8 +31,7 @@ body {
     line-height: 1.6;
     min-height: 100vh;
     position: relative;
-    padding-top: 70px; /* Reduced for mobile */
-    padding-bottom: 80px; /* Space for footer/elements */
+    padding-top: 60px; /* More compact for mobile */
     overflow-x: hidden;
 }
 
@@ -70,7 +69,7 @@ button:focus, a:focus, input:focus, select:focus, textarea:focus {
     }
 }
 
-/* ===== HEADER & NAVIGATION ===== */
+/* ===== HEADER & NAVIGATION - MORE COMPACT ===== */
 header {
     background-color: var(--primary);
     color: white;
@@ -82,15 +81,15 @@ header {
     transition: all 0.3s ease;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     height: auto;
-    min-height: 70px; /* Reduced height for mobile */
+    min-height: 60px; /* More compact height for mobile */
 }
 
 .header-content {
-    padding: 12px 15px; /* Reduced padding for mobile */
+    padding: 10px 15px; /* More compact padding for mobile */
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
 }
 
 .logo-container {
@@ -101,7 +100,7 @@ header {
 }
 
 .logo {
-    font-size: 1.3rem; /* Smaller for mobile */
+    font-size: 1.2rem; /* Smaller for more compact header */
     font-weight: 700;
     display: flex;
     align-items: center;
@@ -109,15 +108,15 @@ header {
 }
 
 .logo-icon {
-    width: 35px; /* Smaller for mobile */
-    height: 35px;
-    border-radius: 8px;
+    width: 30px; /* Smaller for more compact header */
+    height: 30px;
+    border-radius: 6px;
     background: linear-gradient(135deg, var(--secondary), var(--accent));
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
-    font-size: 16px;
+    font-size: 14px;
     overflow: hidden;
 }
 
@@ -129,9 +128,9 @@ header {
 
 .brand-names {
     font-family: 'Pacifico', cursive;
-    font-size: 1rem; /* Smaller for mobile */
+    font-size: 0.9rem; /* Smaller for more compact header */
     color: var(--secondary);
-    margin-top: 3px;
+    margin-top: 2px;
 }
 
 /* Mobile menu button */
@@ -140,22 +139,22 @@ header {
     background: none;
     border: none;
     color: white;
-    font-size: 20px; /* Smaller for mobile */
+    font-size: 18px; /* Smaller for more compact header */
     cursor: pointer;
-    padding: 6px;
+    padding: 5px;
     position: absolute;
-    top: 12px;
-    right: 12px;
+    top: 10px;
+    right: 10px;
     z-index: 1001;
-    min-width: 40px;
-    min-height: 40px;
+    min-width: 36px;
+    min-height: 36px;
 }
 
 /* Navigation */
 nav ul {
     list-style: none;
     display: flex;
-    gap: 10px; /* Reduced gap for mobile */
+    gap: 8px; /* Reduced gap for more compact header */
     flex-wrap: wrap;
     justify-content: center;
 }
@@ -164,15 +163,15 @@ nav a {
     color: white;
     text-decoration: none;
     font-weight: 600;
-    padding: 8px 12px; /* Smaller padding for mobile */
-    border-radius: 20px;
+    padding: 6px 10px; /* Smaller padding for more compact header */
+    border-radius: 15px;
     transition: all 0.3s ease;
     display: flex;
     align-items: center;
-    gap: 6px;
-    font-size: 0.85rem; /* Smaller font for mobile */
-    min-height: 40px;
-    min-width: 40px;
+    gap: 5px;
+    font-size: 0.8rem; /* Smaller font for more compact header */
+    min-height: 36px;
+    min-width: 36px;
 }
 
 nav a:hover {
@@ -665,37 +664,34 @@ nav a:hover {
     transform: scale(1.1);
 }
 
-/* ===== SOCIAL MEDIA ICONS - FIXED FOR MOBILE ===== */
+/* ===== SOCIAL MEDIA ICONS - MOVED TO FOOTER ===== */
 .social-icons {
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
+    position: static; /* Remove fixed positioning */
+    transform: none;
     display: flex;
-    flex-direction: row; /* Horizontal on mobile */
-    gap: 12px;
-    z-index: 99;
-    background: rgba(255, 255, 255, 0.95);
-    padding: 10px 15px;
-    border-radius: 50px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-    backdrop-filter: blur(10px);
+    flex-direction: row;
+    gap: 15px;
+    justify-content: center;
+    margin: 20px 0;
+    background: transparent;
+    padding: 0;
+    box-shadow: none;
+    backdrop-filter: none;
 }
 
 .social-icons a {
-    color: var(--primary);
-    font-size: 18px; /* Slightly smaller for mobile */
+    color: white; /* White for footer */
+    font-size: 18px;
     transition: all 0.3s ease;
-    background: transparent;
-    width: 40px;
-    height: 40px;
+    background: rgba(255, 255, 255, 0.2);
+    width: 45px;
+    height: 45px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: none;
-    min-width: 40px;
-    min-height: 40px;
+    min-width: 45px;
+    min-height: 45px;
 }
 
 .social-icons a:hover {
@@ -710,8 +706,22 @@ footer {
     background-color: var(--primary);
     color: white;
     text-align: center;
-    padding: 20px 15px;
+    padding: 30px 15px 20px; /* More padding at top for social icons */
     margin-top: 50px;
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.contact-info {
+    margin-bottom: 20px;
+}
+
+.contact-info p {
+    margin: 8px 0;
+    font-size: 0.95rem;
 }
 
 /* ===== UTILITY CLASSES ===== */
@@ -802,13 +812,13 @@ footer {
 /* ===== MEDIA QUERIES - TABLET ===== */
 @media (min-width: 768px) {
     body {
-        padding-top: 90px; /* Slightly reduced */
+        padding-top: 80px; /* More compact */
     }
     
     .header-content {
         flex-direction: row;
         justify-content: space-between;
-        padding: 15px 25px;
+        padding: 12px 25px;
     }
     
     .logo-container {
@@ -819,7 +829,7 @@ footer {
     
     .brand-names {
         margin-top: 0;
-        font-size: 1.2rem;
+        font-size: 1.1rem;
     }
     
     .hero {
@@ -853,41 +863,30 @@ footer {
         font-size: 1.2rem;
     }
     
+    /* Social icons remain in footer on tablet */
     .social-icons {
-        bottom: 25px;
-        left: 25px;
-        transform: none;
-        flex-direction: column; /* Vertical on tablet */
-        background: transparent;
-        padding: 0;
-        box-shadow: none;
-        backdrop-filter: none;
-    }
-    
-    .social-icons a {
-        background: rgba(255, 255, 255, 0.9);
-        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+        margin: 25px 0;
     }
 }
 
 /* ===== MEDIA QUERIES - DESKTOP ===== */
 @media (min-width: 1024px) {
     body {
-        padding-top: 100px; /* Original height */
+        padding-top: 90px; /* More compact */
     }
     
     .header-content {
         max-width: 1400px;
         margin: 0 auto;
-        padding: 20px 30px;
+        padding: 15px 30px;
     }
     
     .logo {
-        font-size: 1.5rem;
+        font-size: 1.4rem;
     }
     
     .brand-names {
-        font-size: 1.3rem;
+        font-size: 1.2rem;
     }
     
     .hero {
@@ -923,10 +922,9 @@ footer {
         padding: 0;
     }
     
+    /* Social icons remain in footer on desktop */
     .social-icons {
-        bottom: 160px;
-        left: 20px;
-        flex-direction: column;
+        margin: 30px 0;
     }
 }
 
@@ -944,7 +942,7 @@ footer {
         height: 100vh;
         width: 85%;
         background: var(--primary);
-        padding-top: 70px;
+        padding-top: 60px; /* Adjusted for compact header */
         transition: right 0.3s ease;
         z-index: 1000;
     }
@@ -1024,4 +1022,3 @@ footer {
         height: auto;
     }
 }
-/* Force update */
