@@ -1,4 +1,4 @@
-/* Complete CSS for Munchies & Shukisha - Restoring Beautiful Design */
+
 
 :root {
     --primary: #11151C;
@@ -1013,8 +1013,8 @@ footer {
     bottom: 30px;
     right: 30px;
     background-color: var(--secondary);
-    width: 70px;
-    height: 70px;
+    width: 60px;
+    height: 60px;
     border-radius: 50%;
     display: flex;
     align-items: center;
